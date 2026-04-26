@@ -44,16 +44,13 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
 
-  /* ── VIEWS ── */
   .view { display: none; }
   .view.active { display: block; }
 
-  /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: #f1f5f9; }
   ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
 
-  /* ── NAV ── */
   .nav-link {
     position: relative;
     color: #475569;
@@ -72,9 +69,7 @@
   .nav-link.danger { color: #dc2626; }
   .nav-link.danger:hover { background: #fee2e2; }
 
-  /* ══════════════════════════════════
-     MOBILE SIDEBAR
-  ══════════════════════════════════ */
+  /* SIDEBAR */
   .sidebar-overlay {
     display: none;
     position: fixed;
@@ -161,7 +156,6 @@
 
   .sb-footer { padding: 8px 0; border-top: 1px solid #f1f5f9; flex-shrink: 0; }
 
-  /* Hamburger button – mobile only */
   .hamburger {
     display: none;
     align-items: center; justify-content: center;
@@ -178,16 +172,18 @@
     .hamburger { display: flex; }
     .desktop-only { display: none !important; }
     .hide-mobile { display: none !important; }
-    .grid-4 { grid-template-columns: 1fr 1fr; }
-    .grid-3 { grid-template-columns: 1fr 1fr; }
-    .grid-2 { grid-template-columns: 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr !important; }
+    .grid-3 { grid-template-columns: 1fr 1fr !important; }
+    .grid-2 { grid-template-columns: 1fr !important; }
     .col-2 { grid-column: span 1; }
+    /* Rewards points hero full width on mobile */
+    .rewards-grid { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 480px) {
-    .grid-4, .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr !important; }
+    .grid-3 { grid-template-columns: 1fr !important; }
   }
 
-  /* ── CARDS ── */
   .card {
     background: white;
     border-radius: 14px;
@@ -217,7 +213,6 @@
     flex-shrink: 0;
   }
 
-  /* ── POINT ITEMS ── */
   .point-item {
     display: flex; align-items: center; gap: 10px;
     padding: 11px 14px;
@@ -227,7 +222,6 @@
   }
   .point-item i { font-size: 16px; flex-shrink: 0; }
 
-  /* ── REWARD CARD ── */
   .reward-card {
     background: white;
     border: 1.5px solid #e2e8f0;
@@ -240,8 +234,47 @@
   }
   .reward-card:hover { border-color: #1a56db; box-shadow: 0 0 0 3px rgba(26,86,219,0.06); }
 
-  /* ── TABLE ── */
-  .data-table { width: 100%; border-collapse: collapse; }
+  /* ── RESPONSIVE TABLES ── */
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+  }
+
+  /* Mobile card-style tables */
+  @media (max-width: 640px) {
+    .mobile-cards thead { display: none; }
+    .mobile-cards tbody tr {
+      display: block;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .mobile-cards tbody tr:hover { background: #f8fafc; }
+    .mobile-cards tbody td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13px;
+    }
+    .mobile-cards tbody td:last-child { border-bottom: none; padding-top: 10px; justify-content: flex-end; }
+    .mobile-cards tbody td::before {
+      content: attr(data-label);
+      font-weight: 700;
+      color: #64748b;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+    .mobile-cards tbody td:last-child::before { display: none; }
+  }
+
+  .data-table { width: 100%; border-collapse: collapse; min-width: 500px; }
   .data-table th {
     background: #f8fafc;
     padding: 10px 14px;
@@ -250,6 +283,7 @@
     font-weight: 700;
     color: #64748b;
     border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
   }
   .data-table td {
     padding: 12px 14px;
@@ -261,16 +295,15 @@
   .data-table tr:last-child td { border-bottom: none; }
   .data-table tr:hover td { background: #f8fafc; }
 
-  /* ── BADGE ── */
   .badge {
     display: inline-flex; align-items: center;
     padding: 3px 10px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 700;
+    white-space: nowrap;
   }
 
-  /* ── BTN ── */
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 9px 20px;
@@ -292,11 +325,9 @@
   .btn-danger { background: #dc2626; color: white; }
   .btn-danger:hover { background: #b91c1c; }
 
-  /* ── PROGRESS ── */
   .progress-bar { height: 7px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
 
-  /* ── TOAST ── */
   .toast {
     position: fixed;
     bottom: 28px;
@@ -315,12 +346,13 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    max-width: 90vw;
+    text-align: center;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.success { background: #059669; }
   .toast.error { background: #dc2626; }
 
-  /* ── MODAL ── */
   .modal-overlay {
     display: none;
     position: fixed; inset: 0;
@@ -328,18 +360,21 @@
     z-index: 1000;
     align-items: center; justify-content: center;
     backdrop-filter: blur(4px);
+    padding: 16px;
   }
   .modal-overlay.active { display: flex; }
   .modal {
     background: white;
     border-radius: 16px;
     padding: 32px;
-    width: 90%; max-width: 460px;
+    width: 100%; max-width: 460px;
     animation: fadeUp .3s ease;
     box-shadow: 0 20px 60px rgba(0,0,0,0.15);
   }
+  @media (max-width: 480px) {
+    .modal { padding: 24px 18px; }
+  }
 
-  /* ── FORM ── */
   .form-input {
     width: 100%;
     padding: 10px 14px;
@@ -354,13 +389,11 @@
   }
   .form-input:focus { border-color: #1a56db; background: white; box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
 
-  /* ── HERO ── */
   .hero-bg-dot {
     background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
     background-size: 28px 28px;
   }
 
-  /* ── POINTS BALANCE ── */
   .points-hero {
     background: linear-gradient(135deg, #1a56db 0%, #0ea5e9 100%);
     border-radius: 14px;
@@ -378,10 +411,8 @@
     bottom: -50px; left: -30px;
   }
 
-  /* ── FOOTER ── */
   footer { background: linear-gradient(135deg, #1a56db 0%, #3b82f6 100%); }
 
-  /* ── LOGIN PAGE ── */
   #loginView {
     min-height: 100vh;
     background: linear-gradient(135deg, #f0f6ff 0%, #f8fafc 60%, #f0f9ff 100%);
@@ -410,28 +441,33 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── GRID HELPERS ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
   .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
   .col-2 { grid-column: span 2; }
   .mb-5 { margin-bottom: 20px; }
 
-  /* ── INFO ROW ── */
   .info-row {
     display: flex; justify-content: space-between; align-items: center;
     padding: 10px 0;
     border-bottom: 1px solid #f1f5f9;
     font-size: 13.5px;
+    gap: 8px;
   }
   .info-row:last-child { border-bottom: none; }
-  .info-label { color: #64748b; font-weight: 500; }
-  .info-value { color: #1e293b; font-weight: 700; }
+  .info-label { color: #64748b; font-weight: 500; flex-shrink: 0; }
+  .info-value { color: #1e293b; font-weight: 700; text-align: left; word-break: break-word; }
+
+  /* Reward card mobile */
+  @media (max-width: 480px) {
+    .reward-card { flex-wrap: wrap; gap: 10px; }
+    .reward-card .btn { width: 100%; justify-content: center; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ══════════ SIDEBAR USER ══════════ -->
+<!-- SIDEBAR USER -->
 <div class="sidebar-overlay" id="uSidebarOverlay" onclick="closeSb('u')"></div>
 <div class="mobile-sidebar" id="uSidebar">
   <div class="sb-header">
@@ -444,8 +480,8 @@
     <button class="sb-close" onclick="closeSb('u')"><i class="ri-close-line"></i></button>
   </div>
   <div class="sb-user">
-    <div class="sb-avatar" style="background:linear-gradient(135deg,#1a56db,#0ea5e9)">أح</div>
-    <div><p style="font-size:14px;font-weight:700;color:#1e293b">أحمد محمد</p><p style="font-size:11px;color:#94a3b8">سائق</p></div>
+    <div class="sb-avatar" style="background:linear-gradient(135deg,#1a56db,#0ea5e9)" id="sbUAvatar">أح</div>
+    <div><p style="font-size:14px;font-weight:700;color:#1e293b" id="sbUName">أحمد محمد</p><p style="font-size:11px;color:#94a3b8">سائق</p></div>
   </div>
   <div class="sb-links">
     <button class="sb-link active" id="usb-0" onclick="sbUserGo('uDash',0)"><i class="ri-dashboard-line"></i> لوحة التحكم</button>
@@ -458,7 +494,7 @@
   </div>
 </div>
 
-<!-- ══════════ SIDEBAR ADMIN ══════════ -->
+<!-- SIDEBAR ADMIN -->
 <div class="sidebar-overlay" id="aSidebarOverlay" onclick="closeSb('a')"></div>
 <div class="mobile-sidebar" id="aSidebar">
   <div class="sb-header">
@@ -487,7 +523,7 @@
 </div>
 
 
-<!-- ═══════════════════════════════════ LOGIN ═══════════════════════════════════ -->
+<!-- LOGIN -->
 <div id="loginView" class="view active">
   <div class="hero-bg-dot absolute inset-0 opacity-40 pointer-events-none"></div>
   <div class="login-card relative z-10">
@@ -499,7 +535,6 @@
     </div>
     <h1 class="text-xl font-bold text-center text-slate-800 mb-1">مرحباً بعودتك</h1>
     <p class="text-center text-sm text-slate-400 mb-7">سجّل الدخول للوصول إلى لوحة التحكم</p>
-    <div id="loginError" class="hidden bg-red-50 text-red-600 border border-red-200 rounded-lg px-4 py-3 text-sm text-center mb-5 font-semibold"></div>
     <div class="mb-4">
       <label class="block text-xs font-700 text-slate-500 mb-1.5">اسم المستخدم</label>
       <div class="relative">
@@ -518,18 +553,17 @@
       <i class="ri-login-box-line"></i> تسجيل الدخول
     </button>
     <p class="text-center text-xs text-slate-300 mt-6 pt-5 border-t border-slate-100">
-      للتجربة: <span class="text-slate-500 font-semibold">user / 1234</span> &nbsp;|&nbsp; <span class="text-slate-500 font-semibold">admin / admin</span>
+      ادخل <span class="text-slate-500 font-semibold">user</span> للسائق &nbsp;|&nbsp; <span class="text-slate-500 font-semibold">admin</span> للمدير
     </p>
   </div>
 </div>
 
 
-<!-- ═══════════════════════════════════ USER VIEW ═══════════════════════════════════ -->
+<!-- USER VIEW -->
 <div id="userView" class="view">
 
   <nav class="fixed top-0 left-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm" style="height:60px">
     <div class="h-full flex items-center justify-between px-6 md:px-10 max-w-screen-xl mx-auto">
-
       <div class="flex items-center gap-2.5">
         <button class="hamburger" onclick="openSb('u')"><i class="ri-menu-line"></i></button>
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
@@ -537,7 +571,6 @@
         </div>
         <span class="font-['Pacifico'] text-lg text-primary">SmartDrive</span>
       </div>
-
       <div class="desktop-only hidden md:flex items-center gap-1" id="userNavLinks">
         <button class="nav-link active" onclick="showUserTab('uDash',this)"><i class="ri-dashboard-line ml-1"></i>لوحة التحكم</button>
         <button class="nav-link" onclick="showUserTab('uReports',this)"><i class="ri-file-chart-line ml-1"></i>التقارير</button>
@@ -545,7 +578,6 @@
         <button class="nav-link" onclick="showUserTab('uProfile',this)"><i class="ri-user-3-line ml-1"></i>الملف الشخصي</button>
         <button class="nav-link danger" onclick="logout()"><i class="ri-logout-box-r-line ml-1"></i>خروج</button>
       </div>
-
       <div class="flex items-center gap-2.5">
         <div class="text-right hide-mobile">
           <p id="uNavName" class="text-sm font-bold text-slate-800">أحمد محمد</p>
@@ -558,13 +590,13 @@
 
   <div style="height:60px"></div>
 
-  <!-- ── DASHBOARD ── -->
+  <!-- DASHBOARD -->
   <div id="uDash" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8">
     <div class="rounded-2xl bg-gradient-to-r from-primary to-accent text-white p-6 mb-6 relative overflow-hidden">
       <div class="absolute inset-0 hero-bg-dot opacity-10 pointer-events-none"></div>
       <div class="relative z-10">
         <p class="text-white/70 text-sm mb-1">مساء الخير،</p>
-        <h2 class="text-2xl font-bold mb-1">أحمد محمد العمري</h2>
+        <h2 class="text-2xl font-bold mb-1" id="uWelcomeName">أحمد محمد العمري</h2>
         <p class="text-white/80 text-sm">رحلتك الأخيرة كانت <strong>ممتازة</strong> – استمر على هذا المستوى!</p>
       </div>
       <div class="absolute left-6 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/10 flex items-center justify-center hide-mobile">
@@ -585,7 +617,7 @@
         <div class="info-row"><span class="info-label">الاسم الكامل</span><span class="info-value">أحمد محمد العمري</span></div>
         <div class="info-row"><span class="info-label">العمر</span><span class="info-value">32 سنة</span></div>
         <div class="info-row"><span class="info-label">رقم الجوال</span><span class="info-value">+966 50 123 4567</span></div>
-        <div class="info-row"><span class="info-label">البريد</span><span class="info-value text-xs">ahmed@example.com</span></div>
+        <div class="info-row"><span class="info-label">البريد</span><span class="info-value" style="font-size:12px">ahmed@example.com</span></div>
         <div class="info-row"><span class="info-label">تاريخ التسجيل</span><span class="info-value">يناير 2024</span></div>
       </div>
       <div class="card">
@@ -594,7 +626,7 @@
         <div class="info-row"><span class="info-label">سنة الصنع</span><span class="info-value">2022</span></div>
         <div class="info-row"><span class="info-label">رقم اللوحة</span><span class="info-value"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">أ ب ج - 1234</code></span></div>
         <div class="info-row"><span class="info-label">اللون</span><span class="info-value">أبيض</span></div>
-        <div class="info-row"><span class="info-label">رقم الهيكل</span><span class="info-value text-xs text-slate-500">VIN-JT2BF22K9W0</span></div>
+        <div class="info-row"><span class="info-label">رقم الهيكل</span><span class="info-value" style="font-size:11px;color:#94a3b8">VIN-JT2BF22K9W0</span></div>
       </div>
     </div>
 
@@ -621,7 +653,7 @@
     </div>
 
     <div class="card mb-5">
-      <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
         <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-line-chart-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">تقرير القيادة الشهري</span></div>
         <button class="btn btn-outline btn-sm" onclick="fakeDownload()"><i class="ri-download-cloud-line"></i> تحميل PDF</button>
       </div>
@@ -634,9 +666,9 @@
     </div>
   </div>
 
-  <!-- ── REPORTS ── -->
+  <!-- REPORTS -->
   <div id="uReports" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
       <h1 class="text-xl font-black text-slate-900 flex items-center gap-2"><i class="ri-file-chart-2-line text-primary"></i> التقارير التفصيلية</h1>
       <button class="btn btn-outline btn-sm" onclick="fakeDownload()"><i class="ri-download-cloud-line"></i> تصدير PDF</button>
     </div>
@@ -660,23 +692,55 @@
     </div>
     <div class="card">
       <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-list-check-3 text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">سجل الرحلات</span></div>
-      <table class="data-table">
-        <thead><tr><th>التاريخ</th><th>المدة</th><th>المسافة</th><th>السلوك</th><th>النقاط</th></tr></thead>
-        <tbody>
-          <tr><td>24 فبراير</td><td>45 د</td><td>32 كم</td><td><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td><td class="text-success font-bold">+15</td></tr>
-          <tr><td>23 فبراير</td><td>20 د</td><td>14 كم</td><td><span class="badge bg-blue-100 text-blue-700">جيد</span></td><td class="text-primary font-bold">+8</td></tr>
-          <tr><td>22 فبراير</td><td>60 د</td><td>55 كم</td><td><span class="badge bg-amber-100 text-amber-700">مقبول</span></td><td class="text-warning font-bold">+5</td></tr>
-          <tr><td>21 فبراير</td><td>35 د</td><td>28 كم</td><td><span class="badge bg-red-100 text-red-700">يحتاج تحسين</span></td><td class="text-danger font-bold">−5</td></tr>
-          <tr><td>20 فبراير</td><td>50 د</td><td>40 كم</td><td><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td><td class="text-success font-bold">+12</td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="data-table mobile-cards">
+          <thead><tr><th>التاريخ</th><th>المدة</th><th>المسافة</th><th>السلوك</th><th>النقاط</th></tr></thead>
+          <tbody>
+            <tr>
+              <td data-label="التاريخ">24 فبراير</td>
+              <td data-label="المدة">45 د</td>
+              <td data-label="المسافة">32 كم</td>
+              <td data-label="السلوك"><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td>
+              <td data-label="النقاط"><span class="text-success font-bold">+15</span></td>
+            </tr>
+            <tr>
+              <td data-label="التاريخ">23 فبراير</td>
+              <td data-label="المدة">20 د</td>
+              <td data-label="المسافة">14 كم</td>
+              <td data-label="السلوك"><span class="badge bg-blue-100 text-blue-700">جيد</span></td>
+              <td data-label="النقاط"><span class="text-primary font-bold">+8</span></td>
+            </tr>
+            <tr>
+              <td data-label="التاريخ">22 فبراير</td>
+              <td data-label="المدة">60 د</td>
+              <td data-label="المسافة">55 كم</td>
+              <td data-label="السلوك"><span class="badge bg-amber-100 text-amber-700">مقبول</span></td>
+              <td data-label="النقاط"><span class="text-warning font-bold">+5</span></td>
+            </tr>
+            <tr>
+              <td data-label="التاريخ">21 فبراير</td>
+              <td data-label="المدة">35 د</td>
+              <td data-label="المسافة">28 كم</td>
+              <td data-label="السلوك"><span class="badge bg-red-100 text-red-700">يحتاج تحسين</span></td>
+              <td data-label="النقاط"><span class="text-danger font-bold">−5</span></td>
+            </tr>
+            <tr>
+              <td data-label="التاريخ">20 فبراير</td>
+              <td data-label="المدة">50 د</td>
+              <td data-label="المسافة">40 كم</td>
+              <td data-label="السلوك"><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td>
+              <td data-label="النقاط"><span class="text-success font-bold">+12</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- ── REWARDS ── -->
+  <!-- REWARDS -->
   <div id="uRewards" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
     <h1 class="text-xl font-black text-slate-900 flex items-center gap-2 mb-6"><i class="ri-gift-2-line text-primary"></i> المكافآت</h1>
-    <div class="grid-2 mb-5" style="grid-template-columns:1fr 2fr">
+    <div class="rewards-grid grid-2 mb-5" style="grid-template-columns:1fr 2fr">
       <div class="points-hero">
         <p class="text-white/70 text-xs mb-1 relative z-10">رصيد النقاط الحالي</p>
         <p class="text-5xl font-black text-white relative z-10" id="ptsBal">750</p>
@@ -692,14 +756,14 @@
     </div>
     <p class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2"><i class="ri-gift-line text-primary"></i> المكافآت المتاحة</p>
     <div class="flex flex-col gap-3">
-      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0"><i class="ri-shield-check-line text-primary text-2xl"></i></div><div class="flex-1"><p class="font-bold text-slate-800 text-sm">خصم على التأمين</p><p class="text-xs text-slate-400">خصم 15% على تأمين سيارتك · <strong class="text-primary">500 نقطة</strong></p></div><button class="btn btn-primary btn-sm" onclick="redeem(this,500,'خصم التأمين')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
-      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center flex-shrink-0"><i class="ri-sparkling-line text-sky-500 text-2xl"></i></div><div class="flex-1"><p class="font-bold text-slate-800 text-sm">تنظيف السيارة</p><p class="text-xs text-slate-400">غسيل وتلميع شامل · <strong class="text-primary">200 نقطة</strong></p></div><button class="btn btn-primary btn-sm" onclick="redeem(this,200,'تنظيف السيارة')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
-      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0"><i class="ri-tools-line text-amber-500 text-2xl"></i></div><div class="flex-1"><p class="font-bold text-slate-800 text-sm">خدمات صيانة إضافية</p><p class="text-xs text-slate-400">فحص وصيانة شاملة · <strong class="text-primary">300 نقطة</strong></p></div><button class="btn btn-primary btn-sm" onclick="redeem(this,300,'خدمات الصيانة')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
-      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0"><i class="ri-gas-station-line text-success text-2xl"></i></div><div class="flex-1"><p class="font-bold text-slate-800 text-sm">كرت وقود</p><p class="text-xs text-slate-400">بقيمة 50 ريال · <strong class="text-primary">400 نقطة</strong></p></div><button class="btn btn-primary btn-sm" onclick="redeem(this,400,'كرت وقود')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
+      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0"><i class="ri-shield-check-line text-primary text-2xl"></i></div><div class="flex-1 min-w-0"><p class="font-bold text-slate-800 text-sm">خصم على التأمين</p><p class="text-xs text-slate-400">خصم 15% على تأمين سيارتك · <strong class="text-primary">500 نقطة</strong></p></div><button class="btn btn-primary btn-sm flex-shrink-0" onclick="redeem(this,500,'خصم التأمين')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
+      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center flex-shrink-0"><i class="ri-sparkling-line text-sky-500 text-2xl"></i></div><div class="flex-1 min-w-0"><p class="font-bold text-slate-800 text-sm">تنظيف السيارة</p><p class="text-xs text-slate-400">غسيل وتلميع شامل · <strong class="text-primary">200 نقطة</strong></p></div><button class="btn btn-primary btn-sm flex-shrink-0" onclick="redeem(this,200,'تنظيف السيارة')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
+      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0"><i class="ri-tools-line text-amber-500 text-2xl"></i></div><div class="flex-1 min-w-0"><p class="font-bold text-slate-800 text-sm">خدمات صيانة إضافية</p><p class="text-xs text-slate-400">فحص وصيانة شاملة · <strong class="text-primary">300 نقطة</strong></p></div><button class="btn btn-primary btn-sm flex-shrink-0" onclick="redeem(this,300,'خدمات الصيانة')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
+      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0"><i class="ri-gas-station-line text-success text-2xl"></i></div><div class="flex-1 min-w-0"><p class="font-bold text-slate-800 text-sm">كرت وقود</p><p class="text-xs text-slate-400">بقيمة 50 ريال · <strong class="text-primary">400 نقطة</strong></p></div><button class="btn btn-primary btn-sm flex-shrink-0" onclick="redeem(this,400,'كرت وقود')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
     </div>
   </div>
 
-  <!-- ── PROFILE ── -->
+  <!-- PROFILE -->
   <div id="uProfile" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
     <h1 class="text-xl font-black text-slate-900 flex items-center gap-2 mb-6"><i class="ri-user-settings-line text-primary"></i> الملف الشخصي</h1>
     <div class="grid-2">
@@ -743,7 +807,7 @@
 </div>
 
 
-<!-- ═══════════════════════════════════ ADMIN VIEW ═══════════════════════════════════ -->
+<!-- ADMIN VIEW -->
 <div id="adminView" class="view">
 
   <nav class="fixed top-0 left-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm" style="height:60px">
@@ -756,7 +820,7 @@
         <span class="font-['Pacifico'] text-lg text-primary">SmartDrive</span>
         <span class="text-xs font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full mr-1">ADMIN</span>
       </div>
-      <div class="desktop-only hidden md:flex items-center gap-1">
+      <div class="desktop-only hidden md:flex items-center gap-1" id="adminNavLinks">
         <button class="nav-link active" onclick="showAdminTab('aDash',this)"><i class="ri-dashboard-line ml-1"></i>لوحة التحكم</button>
         <button class="nav-link" onclick="showAdminTab('aUsers',this)"><i class="ri-group-line ml-1"></i>المستخدمون</button>
         <button class="nav-link" onclick="showAdminTab('aRewards',this)"><i class="ri-gift-line ml-1"></i>المكافآت</button>
@@ -772,7 +836,7 @@
 
   <div style="height:60px"></div>
 
-  <!-- ── ADMIN DASH ── -->
+  <!-- ADMIN DASH -->
   <div id="aDash" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8">
     <div class="rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700 text-white p-6 mb-6 relative overflow-hidden">
       <div class="absolute inset-0 hero-bg-dot opacity-5 pointer-events-none"></div>
@@ -795,74 +859,200 @@
     </div>
     <div class="card">
       <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center"><i class="ri-trophy-line text-warning text-sm"></i></div><span class="text-sm font-bold text-slate-700">أفضل السائقين هذا الشهر</span></div>
-      <table class="data-table">
-        <thead><tr><th>#</th><th>الاسم</th><th>نقاط القيادة</th><th>الرحلات</th><th>التقييم</th></tr></thead>
-        <tbody>
-          <tr><td class="font-bold text-amber-500">1</td><td>سارة أحمد</td><td class="font-bold text-primary">95</td><td>52</td><td><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td></tr>
-          <tr><td class="font-bold text-slate-400">2</td><td>محمد علي</td><td class="font-bold text-primary">91</td><td>48</td><td><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td></tr>
-          <tr><td class="font-bold text-slate-400">3</td><td>أحمد محمد</td><td class="font-bold text-primary">82</td><td>38</td><td><span class="badge bg-blue-100 text-blue-700">جيد جداً</span></td></tr>
-          <tr><td class="font-bold text-slate-400">4</td><td>فاطمة عمر</td><td class="font-bold text-primary">79</td><td>41</td><td><span class="badge bg-blue-100 text-blue-700">جيد جداً</span></td></tr>
-          <tr><td class="font-bold text-slate-400">5</td><td>خالد يوسف</td><td class="font-bold text-primary">71</td><td>29</td><td><span class="badge bg-amber-100 text-amber-700">مقبول</span></td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="data-table mobile-cards">
+          <thead><tr><th>#</th><th>الاسم</th><th>نقاط القيادة</th><th>الرحلات</th><th>التقييم</th></tr></thead>
+          <tbody>
+            <tr>
+              <td data-label="#" class="font-bold text-amber-500">1</td>
+              <td data-label="الاسم">سارة أحمد</td>
+              <td data-label="نقاط القيادة" class="font-bold text-primary">95</td>
+              <td data-label="الرحلات">52</td>
+              <td data-label="التقييم"><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td>
+            </tr>
+            <tr>
+              <td data-label="#" class="font-bold text-slate-400">2</td>
+              <td data-label="الاسم">محمد علي</td>
+              <td data-label="نقاط القيادة" class="font-bold text-primary">91</td>
+              <td data-label="الرحلات">48</td>
+              <td data-label="التقييم"><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td>
+            </tr>
+            <tr>
+              <td data-label="#" class="font-bold text-slate-400">3</td>
+              <td data-label="الاسم">أحمد محمد</td>
+              <td data-label="نقاط القيادة" class="font-bold text-primary">82</td>
+              <td data-label="الرحلات">38</td>
+              <td data-label="التقييم"><span class="badge bg-blue-100 text-blue-700">جيد جداً</span></td>
+            </tr>
+            <tr>
+              <td data-label="#" class="font-bold text-slate-400">4</td>
+              <td data-label="الاسم">فاطمة عمر</td>
+              <td data-label="نقاط القيادة" class="font-bold text-primary">79</td>
+              <td data-label="الرحلات">41</td>
+              <td data-label="التقييم"><span class="badge bg-blue-100 text-blue-700">جيد جداً</span></td>
+            </tr>
+            <tr>
+              <td data-label="#" class="font-bold text-slate-400">5</td>
+              <td data-label="الاسم">خالد يوسف</td>
+              <td data-label="نقاط القيادة" class="font-bold text-primary">71</td>
+              <td data-label="الرحلات">29</td>
+              <td data-label="التقييم"><span class="badge bg-amber-100 text-amber-700">مقبول</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- ── ADMIN USERS ── -->
+  <!-- ADMIN USERS -->
   <div id="aUsers" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
       <h1 class="text-xl font-black text-slate-900 flex items-center gap-2"><i class="ri-group-2-line text-primary"></i> إدارة المستخدمين</h1>
       <button class="btn btn-primary btn-sm" onclick="toast('سيتم إضافة المستخدم قريباً')"><i class="ri-user-add-line"></i> إضافة مستخدم</button>
     </div>
     <div class="card">
-      <table class="data-table">
-        <thead><tr><th>المستخدم</th><th>السيارة</th><th>اللوحة</th><th>النقاط</th><th>المكافآت</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-        <tbody>
-          <tr><td><div class="font-bold text-slate-800 text-sm">أحمد محمد العمري</div><div class="text-xs text-slate-400">ahmed@example.com</div></td><td>تويوتا كامري 2022</td><td><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">أ ب ج - 1234</code></td><td class="text-primary font-black text-lg">750</td><td>2</td><td><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف أحمد محمد')"><i class="ri-eye-line"></i> عرض</button></td></tr>
-          <tr><td><div class="font-bold text-slate-800 text-sm">سارة أحمد الخالدي</div><div class="text-xs text-slate-400">sara@example.com</div></td><td>هوندا سيفيك 2023</td><td><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">س ر ع - 5678</code></td><td class="text-success font-black text-lg">1,200</td><td>4</td><td><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف سارة أحمد')"><i class="ri-eye-line"></i> عرض</button></td></tr>
-          <tr><td><div class="font-bold text-slate-800 text-sm">خالد يوسف المطيري</div><div class="text-xs text-slate-400">khalid@example.com</div></td><td>نيسان باترول 2021</td><td><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">خ ل د - 9012</code></td><td class="text-warning font-black text-lg">320</td><td>1</td><td><span class="badge bg-amber-100 text-amber-700">تحذير</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف خالد يوسف')"><i class="ri-eye-line"></i> عرض</button></td></tr>
-          <tr><td><div class="font-bold text-slate-800 text-sm">محمد علي الشهري</div><div class="text-xs text-slate-400">mohammed@example.com</div></td><td>لكزس ES 2022</td><td><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">م ع ل - 3456</code></td><td class="text-success font-black text-lg">980</td><td>3</td><td><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف محمد علي')"><i class="ri-eye-line"></i> عرض</button></td></tr>
-          <tr><td><div class="font-bold text-slate-800 text-sm">فاطمة عمر الدوسري</div><div class="text-xs text-slate-400">fatima@example.com</div></td><td>كيا سبورتاج 2023</td><td><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">ف ط م - 7890</code></td><td class="text-primary font-black text-lg">650</td><td>2</td><td><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف فاطمة عمر')"><i class="ri-eye-line"></i> عرض</button></td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="data-table mobile-cards">
+          <thead><tr><th>المستخدم</th><th>السيارة</th><th>اللوحة</th><th>النقاط</th><th>المكافآت</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+          <tbody>
+            <tr>
+              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">أحمد محمد العمري</div><div class="text-xs text-slate-400">ahmed@example.com</div></td>
+              <td data-label="السيارة">تويوتا كامري 2022</td>
+              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">أ ب ج - 1234</code></td>
+              <td data-label="النقاط" class="text-primary font-black text-lg">750</td>
+              <td data-label="المكافآت">2</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف أحمد محمد')"><i class="ri-eye-line"></i> عرض</button></td>
+            </tr>
+            <tr>
+              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">سارة أحمد الخالدي</div><div class="text-xs text-slate-400">sara@example.com</div></td>
+              <td data-label="السيارة">هوندا سيفيك 2023</td>
+              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">س ر ع - 5678</code></td>
+              <td data-label="النقاط" class="text-success font-black text-lg">1,200</td>
+              <td data-label="المكافآت">4</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف سارة أحمد')"><i class="ri-eye-line"></i> عرض</button></td>
+            </tr>
+            <tr>
+              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">خالد يوسف المطيري</div><div class="text-xs text-slate-400">khalid@example.com</div></td>
+              <td data-label="السيارة">نيسان باترول 2021</td>
+              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">خ ل د - 9012</code></td>
+              <td data-label="النقاط" class="text-warning font-black text-lg">320</td>
+              <td data-label="المكافآت">1</td>
+              <td data-label="الحالة"><span class="badge bg-amber-100 text-amber-700">تحذير</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف خالد يوسف')"><i class="ri-eye-line"></i> عرض</button></td>
+            </tr>
+            <tr>
+              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">محمد علي الشهري</div><div class="text-xs text-slate-400">mohammed@example.com</div></td>
+              <td data-label="السيارة">لكزس ES 2022</td>
+              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">م ع ل - 3456</code></td>
+              <td data-label="النقاط" class="text-success font-black text-lg">980</td>
+              <td data-label="المكافآت">3</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف محمد علي')"><i class="ri-eye-line"></i> عرض</button></td>
+            </tr>
+            <tr>
+              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">فاطمة عمر الدوسري</div><div class="text-xs text-slate-400">fatima@example.com</div></td>
+              <td data-label="السيارة">كيا سبورتاج 2023</td>
+              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">ف ط م - 7890</code></td>
+              <td data-label="النقاط" class="text-primary font-black text-lg">650</td>
+              <td data-label="المكافآت">2</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف فاطمة عمر')"><i class="ri-eye-line"></i> عرض</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- ── ADMIN REWARDS ── -->
+  <!-- ADMIN REWARDS -->
   <div id="aRewards" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
       <h1 class="text-xl font-black text-slate-900 flex items-center gap-2"><i class="ri-gift-2-line text-primary"></i> إدارة المكافآت</h1>
       <button class="btn btn-primary btn-sm" onclick="document.getElementById('addRwModal').classList.add('active')"><i class="ri-add-line"></i> إضافة مكافأة</button>
     </div>
     <div class="card mb-5">
       <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-gift-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">المكافآت الحالية</span></div>
-      <table class="data-table">
-        <thead><tr><th>المكافأة</th><th>النقاط</th><th>الاستبدالات</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-        <tbody>
-          <tr><td class="flex items-center gap-2"><i class="ri-shield-check-line text-primary text-lg"></i> خصم التأمين</td><td class="font-bold">500</td><td>38 مرة</td><td><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td></tr>
-          <tr><td class="flex items-center gap-2"><i class="ri-sparkling-line text-sky-500 text-lg"></i> تنظيف السيارة</td><td class="font-bold">200</td><td>92 مرة</td><td><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td></tr>
-          <tr><td class="flex items-center gap-2"><i class="ri-tools-line text-amber-500 text-lg"></i> خدمات صيانة</td><td class="font-bold">300</td><td>54 مرة</td><td><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td></tr>
-          <tr><td class="flex items-center gap-2"><i class="ri-gas-station-line text-success text-lg"></i> كرت وقود</td><td class="font-bold">400</td><td>21 مرة</td><td><span class="badge bg-amber-100 text-amber-700">محدودة</span></td><td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="data-table mobile-cards">
+          <thead><tr><th>المكافأة</th><th>النقاط</th><th>الاستبدالات</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+          <tbody>
+            <tr>
+              <td data-label="المكافأة"><i class="ri-shield-check-line text-primary ml-1"></i> خصم التأمين</td>
+              <td data-label="النقاط" class="font-bold">500</td>
+              <td data-label="الاستبدالات">38 مرة</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td>
+            </tr>
+            <tr>
+              <td data-label="المكافأة"><i class="ri-sparkling-line text-sky-500 ml-1"></i> تنظيف السيارة</td>
+              <td data-label="النقاط" class="font-bold">200</td>
+              <td data-label="الاستبدالات">92 مرة</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td>
+            </tr>
+            <tr>
+              <td data-label="المكافأة"><i class="ri-tools-line text-amber-500 ml-1"></i> خدمات صيانة</td>
+              <td data-label="النقاط" class="font-bold">300</td>
+              <td data-label="الاستبدالات">54 مرة</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td>
+            </tr>
+            <tr>
+              <td data-label="المكافأة"><i class="ri-gas-station-line text-success ml-1"></i> كرت وقود</td>
+              <td data-label="النقاط" class="font-bold">400</td>
+              <td data-label="الاستبدالات">21 مرة</td>
+              <td data-label="الحالة"><span class="badge bg-amber-100 text-amber-700">محدودة</span></td>
+              <td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <div class="card">
       <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-history-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">سجل التحويلات</span></div>
-      <table class="data-table">
-        <thead><tr><th>المستخدم</th><th>المكافأة</th><th>النقاط</th><th>التاريخ</th><th>الحالة</th></tr></thead>
-        <tbody>
-          <tr><td>سارة أحمد</td><td><i class="ri-shield-check-line text-primary ml-1"></i>خصم التأمين</td><td class="text-danger font-bold">−500</td><td>22 فبراير</td><td><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td></tr>
-          <tr><td>محمد علي</td><td><i class="ri-sparkling-line text-sky-500 ml-1"></i>تنظيف السيارة</td><td class="text-danger font-bold">−200</td><td>20 فبراير</td><td><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td></tr>
-          <tr><td>أحمد محمد</td><td><i class="ri-tools-line text-amber-500 ml-1"></i>خدمات صيانة</td><td class="text-danger font-bold">−300</td><td>18 فبراير</td><td><span class="badge bg-blue-100 text-blue-700">قيد التنفيذ</span></td></tr>
-          <tr><td>فاطمة عمر</td><td><i class="ri-gas-station-line text-success ml-1"></i>كرت وقود</td><td class="text-danger font-bold">−400</td><td>15 فبراير</td><td><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="data-table mobile-cards">
+          <thead><tr><th>المستخدم</th><th>المكافأة</th><th>النقاط</th><th>التاريخ</th><th>الحالة</th></tr></thead>
+          <tbody>
+            <tr>
+              <td data-label="المستخدم">سارة أحمد</td>
+              <td data-label="المكافأة"><i class="ri-shield-check-line text-primary ml-1"></i>خصم التأمين</td>
+              <td data-label="النقاط" class="text-danger font-bold">−500</td>
+              <td data-label="التاريخ">22 فبراير</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td>
+            </tr>
+            <tr>
+              <td data-label="المستخدم">محمد علي</td>
+              <td data-label="المكافأة"><i class="ri-sparkling-line text-sky-500 ml-1"></i>تنظيف السيارة</td>
+              <td data-label="النقاط" class="text-danger font-bold">−200</td>
+              <td data-label="التاريخ">20 فبراير</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td>
+            </tr>
+            <tr>
+              <td data-label="المستخدم">أحمد محمد</td>
+              <td data-label="المكافأة"><i class="ri-tools-line text-amber-500 ml-1"></i>خدمات صيانة</td>
+              <td data-label="النقاط" class="text-danger font-bold">−300</td>
+              <td data-label="التاريخ">18 فبراير</td>
+              <td data-label="الحالة"><span class="badge bg-blue-100 text-blue-700">قيد التنفيذ</span></td>
+            </tr>
+            <tr>
+              <td data-label="المستخدم">فاطمة عمر</td>
+              <td data-label="المكافأة"><i class="ri-gas-station-line text-success ml-1"></i>كرت وقود</td>
+              <td data-label="النقاط" class="text-danger font-bold">−400</td>
+              <td data-label="التاريخ">15 فبراير</td>
+              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- ── ADMIN REPORTS ── -->
+  <!-- ADMIN REPORTS -->
   <div id="aReports" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
       <h1 class="text-xl font-black text-slate-900 flex items-center gap-2"><i class="ri-file-chart-2-line text-primary"></i> تقارير النظام</h1>
       <button class="btn btn-outline btn-sm" onclick="fakeDownload()"><i class="ri-download-cloud-line"></i> تصدير</button>
     </div>
@@ -901,10 +1091,10 @@
   </footer>
 </div>
 
-<!-- ── TOAST ── -->
+<!-- TOAST -->
 <div class="toast" id="toastEl"></div>
 
-<!-- ── ADD REWARD MODAL ── -->
+<!-- ADD REWARD MODAL -->
 <div class="modal-overlay" id="addRwModal">
   <div class="modal">
     <div class="flex items-center gap-2 mb-6">
@@ -922,33 +1112,36 @@
 </div>
 
 <script>
-// ── AUTH ──
-const USERS = {
-  user:  { pass: '1234',  role: 'user',  name: 'أحمد محمد', initials: 'أح' },
-  admin: { pass: 'admin', role: 'admin', name: 'مدير النظام', initials: 'مد' }
-};
+// ── AUTH: أي شيء يدخله المستخدم يطلع صح ──
 let userPoints = 750;
 let repChartInited = false, adminRepChartInited = false;
+let currentUser = null;
 
 function doLogin() {
   const u = document.getElementById('uInput').value.trim();
   const p = document.getElementById('pInput').value;
-  const err = document.getElementById('loginError');
-  const match = USERS[u];
-  if (match && match.pass === p) {
-    err.classList.add('hidden');
-    showView(match.role === 'admin' ? 'adminView' : 'userView');
-    if (match.role === 'user') {
-      document.getElementById('uAvatar').textContent = match.initials;
-      document.getElementById('uNavName').textContent = match.name;
-    }
-    setTimeout(initCharts, 120);
+
+  // تحديد النوع بناءً على اسم المستخدم فقط
+  // إذا كتب "admin" يدخل كمدير، أي شيء ثاني يدخل كسائق
+  const isAdmin = u.toLowerCase() === 'admin';
+  const displayName = u || 'مستخدم';
+  const initials = displayName.charAt(0) || 'م';
+
+  if (isAdmin) {
+    currentUser = { role: 'admin', name: 'مدير النظام', initials: 'مد' };
+    showView('adminView');
   } else {
-    err.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
-    err.classList.remove('hidden');
-    document.getElementById('pInput').value = '';
+    currentUser = { role: 'user', name: displayName, initials: initials };
+    document.getElementById('uAvatar').textContent = initials;
+    document.getElementById('uNavName').textContent = displayName;
+    document.getElementById('sbUAvatar').textContent = initials;
+    document.getElementById('sbUName').textContent = displayName;
+    document.getElementById('uWelcomeName').textContent = displayName;
+    showView('userView');
   }
+  setTimeout(initCharts, 120);
 }
+
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('loginView').classList.contains('active')) doLogin();
 });
@@ -958,7 +1151,7 @@ function showView(id) {
   document.getElementById(id).classList.add('active');
 }
 
-// ── SIDEBAR ──
+// SIDEBAR
 function openSb(prefix) {
   document.getElementById(prefix + 'Sidebar').classList.add('open');
   document.getElementById(prefix + 'SidebarOverlay').classList.add('open');
@@ -971,10 +1164,8 @@ function closeSb(prefix) {
 }
 
 function sbUserGo(tabId, idx) {
-  // update sidebar active
   for (let i = 0; i < 4; i++) document.getElementById('usb-' + i).classList.remove('active');
   document.getElementById('usb-' + idx).classList.add('active');
-  // sync desktop nav
   const dBtns = document.querySelectorAll('#userNavLinks .nav-link');
   dBtns.forEach(b => b.classList.remove('active'));
   if (dBtns[idx]) dBtns[idx].classList.add('active');
@@ -986,7 +1177,7 @@ function sbUserGo(tabId, idx) {
 function sbAdminGo(tabId, idx) {
   for (let i = 0; i < 4; i++) document.getElementById('asb-' + i).classList.remove('active');
   document.getElementById('asb-' + idx).classList.add('active');
-  const dBtns = document.querySelectorAll('#adminView .desktop-only .nav-link');
+  const dBtns = document.querySelectorAll('#adminNavLinks .nav-link');
   dBtns.forEach(b => b.classList.remove('active'));
   if (dBtns[idx]) dBtns[idx].classList.add('active');
   showAdminTab(tabId, null);
@@ -994,7 +1185,7 @@ function sbAdminGo(tabId, idx) {
   window.scrollTo(0, 0);
 }
 
-// ── TABS ──
+// TABS
 function showUserTab(id, btn) {
   ['uDash','uReports','uRewards','uProfile'].forEach(t => {
     document.getElementById(t).style.display = 'none';
@@ -1009,30 +1200,35 @@ function showAdminTab(id, btn) {
     document.getElementById(t).style.display = 'none';
   });
   document.getElementById(id).style.display = 'block';
-  document.querySelectorAll('#adminView .desktop-only .nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('#adminNavLinks .nav-link').forEach(l => l.classList.remove('active'));
   if (btn) btn.classList.add('active');
   if (id === 'aReports' && !adminRepChartInited) { adminRepChartInited = true; setTimeout(initAdminRepChart, 60); }
 }
 
-// ── REWARDS ──
+// REWARDS
 function redeem(btn, cost, name) {
-  if (userPoints < cost) { toast(`رصيدك غير كافٍ (${userPoints} نقطة)`, 'error'); return; }
-  if (!confirm(`استبدال "${name}" مقابل ${cost} نقطة؟`)) return;
+  if (userPoints < cost) { toast('رصيدك غير كافٍ (' + userPoints + ' نقطة)', 'error'); return; }
+  if (!confirm('استبدال "' + name + '" مقابل ' + cost + ' نقطة؟')) return;
   userPoints -= cost;
   document.getElementById('totalPts').textContent = userPoints.toLocaleString();
   document.getElementById('ptsBal').textContent = userPoints.toLocaleString();
-  toast(`تم استبدال "${name}" بنجاح!`, 'success');
+  toast('تم استبدال "' + name + '" بنجاح!', 'success');
   document.querySelectorAll('.reward-card .btn').forEach(b => {
-    const c = parseInt(b.getAttribute('onclick').match(/\d+/)[0]);
-    b.disabled = userPoints < c;
-    b.style.opacity = userPoints < c ? '0.45' : '1';
+    const match = b.getAttribute('onclick').match(/\d+/);
+    if (match) {
+      const c = parseInt(match[0]);
+      b.disabled = userPoints < c;
+      b.style.opacity = userPoints < c ? '0.45' : '1';
+    }
   });
 }
 
-// ── TOAST ──
-function toast(msg, type = '') {
+// TOAST
+function toast(msg, type) {
+  type = type || '';
   const el = document.getElementById('toastEl');
-  el.innerHTML = (type === 'success' ? '<i class="ri-checkbox-circle-fill"></i> ' : type === 'error' ? '<i class="ri-close-circle-fill"></i> ' : '<i class="ri-information-line"></i> ') + msg;
+  const icon = type === 'success' ? '<i class="ri-checkbox-circle-fill"></i> ' : type === 'error' ? '<i class="ri-close-circle-fill"></i> ' : '<i class="ri-information-line"></i> ';
+  el.innerHTML = icon + msg;
   el.className = 'toast' + (type ? ' ' + type : '');
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 3000);
@@ -1047,7 +1243,7 @@ function addRewardAdmin() {
   toast('تم إضافة المكافأة بنجاح', 'success');
 }
 
-// ── CHARTS ──
+// CHARTS
 const months = ['سبتمبر','أكتوبر','نوفمبر','ديسمبر','يناير','فبراير'];
 
 function initCharts() {
