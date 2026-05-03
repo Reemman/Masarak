@@ -1,1320 +1,384 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartDrive – نظام إدارة القيادة الذكية</title>
-
-<script src="https://cdn.tailwindcss.com/3.4.16"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          primary: "#1a56db",
-          primaryLight: "#3b82f6",
-          primarySoft: "#dbeafe",
-          accent: "#0ea5e9",
-          success: "#059669",
-          successSoft: "#d1fae5",
-          warning: "#d97706",
-          warningSoft: "#fef3c7",
-          danger: "#dc2626",
-          dangerSoft: "#fee2e2",
-        },
-        fontFamily: {
-          cairo: ["Cairo", "sans-serif"],
-          pacifico: ["Pacifico", "cursive"],
-        },
-        borderRadius: {
-          card: "14px",
-          button: "10px",
-        },
-      }
-    }
-  };
-</script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Pacifico&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+--teal:#1D9E75;--teal-light:#E1F5EE;--teal-dark:#085041;
+--coral:#D85A30;--coral-light:#FAECE7;
+--amber:#BA7517;--amber-light:#FAEEDA;
+--purple:#534AB7;--purple-light:#EEEDFE;
+--green:#639922;--green-light:#EAF3DE;
+--gray-bg:#F1EFE8;
+--text:#2C2C2A;--text-sec:#5F5E5A;
+--border:#B4B2A9;
+}
+.page{display:none;flex-direction:column;min-height:600px;background:#fafaf9;}
+.page.active{display:flex;}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1.5px solid #B4B2A9;background:#085041;}
+.logo{font-size:16px;font-weight:500;color:white;display:flex;align-items:center;gap:8px;}
+.logo-dot{width:10px;height:10px;background:#5DCAA5;border-radius:50%;}
+.nav-links{display:flex;gap:4px;}
+.nav-btn{font-size:13px;padding:6px 12px;border:none;background:transparent;color:rgba(255,255,255,0.75);cursor:pointer;border-radius:8px;}
+.nav-btn:hover{background:rgba(255,255,255,0.12);color:white;}
+.nav-btn.active{background:rgba(255,255,255,0.18);color:white;font-weight:500;}
+.nav-cta{font-size:13px;padding:7px 16px;border:none;background:#5DCAA5;color:#085041;cursor:pointer;border-radius:8px;font-weight:500;}
+.nav-cta:hover{background:#9FE1CB;}
 
-  .view { display: none; }
-  .view.active { display: block; }
+.hero{padding:64px 40px 48px;text-align:center;background:white;border-bottom:1.5px solid #B4B2A9;}
+.badge{display:inline-block;font-size:12px;padding:5px 14px;background:var(--teal-light);color:var(--teal-dark);border-radius:20px;margin-bottom:20px;border:1px solid #9FE1CB;}
+.hero h1{font-size:34px;font-weight:500;line-height:1.25;color:var(--text);margin-bottom:12px;}
+.hero h1 span{color:var(--teal);}
+.hero p{font-size:16px;color:var(--text-sec);margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto;}
+.cta-btn{font-size:15px;padding:14px 32px;background:var(--teal);color:white;border:none;border-radius:12px;cursor:pointer;font-weight:500;}
+.cta-btn:hover{background:var(--teal-dark);}
+.cta-sub{font-size:13px;color:var(--text-sec);margin-top:12px;}
 
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: #f1f5f9; }
-  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:24px 40px;}
+.stat-card{background:white;border-radius:12px;padding:20px;text-align:center;border:1.5px solid #B4B2A9;}
+.stat-num{font-size:28px;font-weight:500;color:var(--teal-dark);}
+.stat-label{font-size:13px;color:var(--text-sec);margin-top:4px;}
 
-  .nav-link {
-    position: relative;
-    color: #475569;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 6px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all .2s;
-    border: none;
-    background: none;
-    font-family: 'Cairo', sans-serif;
-  }
-  .nav-link:hover { color: #1a56db; background: #dbeafe; }
-  .nav-link.active { color: #1a56db; background: #dbeafe; font-weight: 700; }
-  .nav-link.danger { color: #dc2626; }
-  .nav-link.danger:hover { background: #fee2e2; }
+.features{padding:0 40px 48px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.feature-card{background:white;border:1.5px solid #B4B2A9;border-radius:12px;padding:20px;cursor:pointer;transition:border-color 0.2s;}
+.feature-card:hover{border-color:var(--teal);}
+.feature-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+.feature-card h3{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.feature-card p{font-size:13px;color:var(--text-sec);}
 
-  /* SIDEBAR */
-  .sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(15,23,42,0.5);
-    z-index: 400;
-    backdrop-filter: blur(2px);
-  }
-  .sidebar-overlay.open { display: block; }
+.page-header{padding:32px 40px 20px;border-bottom:1.5px solid #B4B2A9;background:white;}
+.page-header h2{font-size:22px;font-weight:500;color:var(--text);}
+.page-header p{font-size:14px;color:var(--text-sec);margin-top:4px;}
 
-  .mobile-sidebar {
-    position: fixed;
-    top: 0;
-    right: -280px;
-    width: 265px;
-    height: 100%;
-    background: white;
-    z-index: 401;
-    box-shadow: -8px 0 32px rgba(0,0,0,0.13);
-    transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-  .mobile-sidebar.open { right: 0; }
+.scan-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:24px 40px;}
+.upload-zone{border:2px dashed #888780;border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;background:white;}
+.upload-zone:hover{border-color:var(--teal);background:var(--teal-light);}
+.upload-icon{width:48px;height:48px;background:var(--teal-light);border:1.5px solid #9FE1CB;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px;}
+.upload-zone h3{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px;}
+.upload-zone p{font-size:13px;color:var(--text-sec);}
+.upload-btn{margin-top:16px;font-size:13px;padding:8px 18px;background:var(--teal);color:white;border:none;border-radius:8px;cursor:pointer;}
+.desc-panel{border:1.5px solid #B4B2A9;border-radius:8px;padding:12px;background:white;margin-top:12px;}
 
-  .sb-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 18px;
-    border-bottom: 1px solid #e2e8f0;
-    flex-shrink: 0;
-  }
-  .sb-close {
-    width: 32px; height: 32px;
-    border: none; background: #f1f5f9;
-    border-radius: 8px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; color: #64748b;
-    transition: all .2s;
-  }
-  .sb-close:hover { background: #fee2e2; color: #dc2626; }
+.twin-panel{background:var(--teal-dark);border-radius:12px;padding:20px;color:white;border:1.5px solid #085041;}
+.twin-title{font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:12px;}
+.twin-viz{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.twin-pulse{width:60px;height:60px;border-radius:50%;background:rgba(29,158,117,0.5);display:flex;align-items:center;justify-content:center;font-size:28px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.twin-dot{position:absolute;width:8px;height:8px;background:#5DCAA5;border-radius:50%;}
+.repair-bar{margin-top:16px;}
+.repair-label{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:6px;}
+.bar-track{background:rgba(255,255,255,0.2);border-radius:4px;height:8px;}
+.bar-fill{background:#5DCAA5;border-radius:4px;height:8px;width:0;transition:width 1s;}
 
-  .sb-user {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
-    background: #f8fafc;
-    border-bottom: 1px solid #f1f5f9;
-    flex-shrink: 0;
-  }
-  .sb-avatar {
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 700; font-size: 14px;
-    flex-shrink: 0;
-  }
+.quick-diagnose{padding:0 40px 32px;}
+.quick-diagnose h3{font-size:16px;font-weight:500;color:var(--text);margin-bottom:12px;}
+.diagnose-items{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.d-item{border:1.5px solid #B4B2A9;border-radius:8px;padding:12px;cursor:pointer;text-align:center;font-size:13px;color:var(--text);background:white;}
+.d-item:hover{background:var(--teal-light);border-color:var(--teal);}
+.d-item span{display:block;font-size:20px;margin-bottom:6px;}
 
-  .sb-links { flex: 1; padding: 6px 0; }
-  .sb-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 13px 18px;
-    font-family: 'Cairo', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: #475569;
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: all .18s;
-    text-align: right;
-  }
-  .sb-link i { font-size: 18px; flex-shrink: 0; }
-  .sb-link:hover { background: #f1f5f9; color: #1a56db; }
-  .sb-link.active { background: #dbeafe; color: #1a56db; font-weight: 700; border-right: 3px solid #1a56db; }
-  .sb-link.danger { color: #dc2626; }
-  .sb-link.danger:hover { background: #fee2e2; }
+.guide-layout{display:grid;grid-template-columns:220px 1fr;gap:0;flex:1;}
+.guide-sidebar{border-right:1.5px solid #B4B2A9;padding:24px 16px;background:white;}
+.step-list{list-style:none;}
+.step-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;font-size:13px;color:var(--text-sec);}
+.step-item:hover{background:var(--teal-light);}
+.step-item.active-step{background:var(--teal-light);color:var(--teal-dark);font-weight:500;}
+.step-num{width:24px;height:24px;border-radius:50%;background:#D3D1C7;color:var(--text-sec);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-item.active-step .step-num{background:var(--teal);color:white;}
+.guide-content{padding:32px;background:#fafaf9;}
+.step-visual{background:var(--teal-light);border:1.5px solid #9FE1CB;border-radius:12px;height:180px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:20px;}
+.guide-content h3{font-size:18px;font-weight:500;color:var(--text);margin-bottom:8px;}
+.guide-content p{font-size:14px;color:var(--text-sec);line-height:1.7;}
+.tools-needed{margin-top:20px;padding:16px;background:white;border:1.5px solid #B4B2A9;border-radius:8px;}
+.tools-needed h4{font-size:13px;font-weight:500;color:var(--amber);margin-bottom:8px;}
+.tools-list{display:flex;gap:8px;flex-wrap:wrap;}
+.tool-tag{font-size:12px;padding:4px 10px;background:var(--gray-bg);border:1px solid #B4B2A9;border-radius:20px;color:var(--text);}
+.step-nav{display:flex;gap:8px;margin-top:24px;}
+.step-nav-btn{font-size:13px;padding:9px 20px;border:1.5px solid #B4B2A9;background:white;border-radius:8px;cursor:pointer;color:var(--text);}
+.step-nav-btn.primary{background:var(--teal);color:white;border-color:var(--teal);}
+.guide-wrapper{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column;}
 
-  .sb-footer { padding: 8px 0; border-top: 1px solid #f1f5f9; flex-shrink: 0; }
+.rewards-layout{padding:32px 40px;background:#fafaf9;}
+.points-hero{background:var(--teal-dark);border:1.5px solid #085041;border-radius:12px;padding:28px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.points-left h2{font-size:13px;color:rgba(255,255,255,0.7);}
+.points-left .big{font-size:40px;font-weight:500;color:white;margin:4px 0;}
+.points-left p{font-size:13px;color:rgba(255,255,255,0.6);}
+.tree-visual{font-size:60px;}
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.impact-card{background:white;border:1.5px solid #B4B2A9;border-radius:8px;padding:16px;text-align:center;}
+.impact-card .i-num{font-size:22px;font-weight:500;color:var(--teal-dark);}
+.impact-card .i-label{font-size:12px;color:var(--text-sec);margin-top:4px;}
+.rewards-section h3{font-size:16px;font-weight:500;color:var(--text);margin-bottom:12px;}
+.rewards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.reward-card{border:1.5px solid #B4B2A9;border-radius:12px;padding:16px;cursor:pointer;background:white;}
+.reward-card:hover{border-color:var(--teal);}
+.reward-img{font-size:32px;margin-bottom:8px;}
+.reward-card h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.reward-card .pts{font-size:12px;color:var(--teal);font-weight:500;}
+.reward-card p{font-size:12px;color:var(--text-sec);margin-top:4px;}
+.redeem-btn{margin-top:10px;font-size:12px;padding:6px 14px;background:var(--teal-light);color:var(--teal-dark);border:1px solid #9FE1CB;border-radius:8px;cursor:pointer;width:100%;}
 
-  .hamburger {
-    display: none;
-    align-items: center; justify-content: center;
-    width: 36px; height: 36px;
-    border: none; background: #f1f5f9;
-    border-radius: 8px; cursor: pointer;
-    color: #475569; font-size: 20px;
-    transition: all .2s;
-    flex-shrink: 0;
-  }
-  .hamburger:hover { background: #dbeafe; color: #1a56db; }
+.community-layout{padding:32px 40px;background:#fafaf9;}
+.comm-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.expert-card{border:1.5px solid #B4B2A9;border-radius:12px;padding:16px;display:flex;gap:12px;background:white;}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--teal-light);border:1.5px solid #9FE1CB;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--teal-dark);flex-shrink:0;}
+.expert-info h4{font-size:14px;font-weight:500;color:var(--text);}
+.expert-info p{font-size:12px;color:var(--text-sec);margin-top:2px;}
+.expert-info .skills{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;}
+.skill-tag{font-size:11px;padding:3px 8px;background:var(--teal-light);color:var(--teal-dark);border:1px solid #9FE1CB;border-radius:20px;}
+.contact-expert{margin-top:10px;font-size:12px;padding:7px 14px;background:var(--teal);color:white;border:none;border-radius:8px;cursor:pointer;}
+.gallery-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:12px;}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.gallery-item{border-radius:8px;overflow:hidden;border:1.5px solid #B4B2A9;background:white;}
+.before-after{display:grid;grid-template-columns:1fr 1fr;}
+.ba-half{padding:10px;text-align:center;font-size:24px;}
+.ba-half:first-child{background:#fef2f2;}
+.ba-half:last-child{background:#f0fdf4;}
+.ba-label{font-size:11px;color:var(--text-sec);margin-top:4px;}
+.share-btn{display:block;width:100%;font-size:12px;padding:8px;background:var(--gray-bg);color:var(--text);border:none;border-top:1px solid #B4B2A9;cursor:pointer;}
 
-  @media (max-width: 768px) {
-    .hamburger { display: flex; }
-    .desktop-only { display: none !important; }
-    .hide-mobile { display: none !important; }
-    .grid-4 { grid-template-columns: 1fr 1fr !important; }
-    .grid-3 { grid-template-columns: 1fr 1fr !important; }
-    .grid-2 { grid-template-columns: 1fr !important; }
-    .col-2 { grid-column: span 1; }
-    /* Rewards points hero full width on mobile */
-    .rewards-grid { grid-template-columns: 1fr !important; }
-  }
-  @media (max-width: 480px) {
-    .grid-4 { grid-template-columns: 1fr 1fr !important; }
-    .grid-3 { grid-template-columns: 1fr !important; }
-  }
-
-  .card {
-    background: white;
-    border-radius: 14px;
-    border: 1px solid #e2e8f0;
-    padding: 20px;
-    transition: all .2s;
-  }
-  .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
-
-  .stat-card {
-    background: white;
-    border-radius: 14px;
-    border: 1px solid #e2e8f0;
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    transition: all .2s;
-  }
-  .stat-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); transform: translateY(-2px); }
-
-  .stat-icon {
-    width: 48px; height: 48px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .point-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 11px 14px;
-    border-radius: 10px;
-    font-size: 13.5px;
-    font-weight: 600;
-  }
-  .point-item i { font-size: 16px; flex-shrink: 0; }
-
-  .reward-card {
-    background: white;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    transition: all .2s;
-  }
-  .reward-card:hover { border-color: #1a56db; box-shadow: 0 0 0 3px rgba(26,86,219,0.06); }
-
-  /* ── RESPONSIVE TABLES ── */
-  .table-wrap {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 10px;
-  }
-
-  /* Mobile card-style tables */
-  @media (max-width: 640px) {
-    .mobile-cards thead { display: none; }
-    .mobile-cards tbody tr {
-      display: block;
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-    }
-    .mobile-cards tbody tr:hover { background: #f8fafc; }
-    .mobile-cards tbody td {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 13px;
-    }
-    .mobile-cards tbody td:last-child { border-bottom: none; padding-top: 10px; justify-content: flex-end; }
-    .mobile-cards tbody td::before {
-      content: attr(data-label);
-      font-weight: 700;
-      color: #64748b;
-      font-size: 11px;
-      flex-shrink: 0;
-      margin-left: 8px;
-    }
-    .mobile-cards tbody td:last-child::before { display: none; }
-  }
-
-  .data-table { width: 100%; border-collapse: collapse; min-width: 500px; }
-  .data-table th {
-    background: #f8fafc;
-    padding: 10px 14px;
-    text-align: right;
-    font-size: 12px;
-    font-weight: 700;
-    color: #64748b;
-    border-bottom: 1px solid #e2e8f0;
-    white-space: nowrap;
-  }
-  .data-table td {
-    padding: 12px 14px;
-    font-size: 13px;
-    color: #475569;
-    border-bottom: 1px solid #f1f5f9;
-    transition: background .15s;
-  }
-  .data-table tr:last-child td { border-bottom: none; }
-  .data-table tr:hover td { background: #f8fafc; }
-
-  .badge {
-    display: inline-flex; align-items: center;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 9px 20px;
-    border-radius: 10px;
-    font-family: 'Cairo', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    transition: all .2s;
-  }
-  .btn:hover { transform: translateY(-1px); }
-  .btn-primary { background: #1a56db; color: white; }
-  .btn-primary:hover { background: #1341b0; box-shadow: 0 4px 14px rgba(26,86,219,0.35); }
-  .btn-outline { background: white; color: #1a56db; border: 1.5px solid #1a56db; }
-  .btn-outline:hover { background: #dbeafe; }
-  .btn-ghost { background: #f1f5f9; color: #475569; }
-  .btn-sm { padding: 7px 14px; font-size: 12px; }
-  .btn-danger { background: #dc2626; color: white; }
-  .btn-danger:hover { background: #b91c1c; }
-
-  .progress-bar { height: 7px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
-
-  .toast {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: #0f172a;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-size: 13.5px;
-    font-weight: 600;
-    z-index: 9999;
-    opacity: 0;
-    transition: all .3s ease;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    max-width: 90vw;
-    text-align: center;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.success { background: #059669; }
-  .toast.error { background: #dc2626; }
-
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(15,23,42,0.45);
-    z-index: 1000;
-    align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
-    padding: 16px;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal {
-    background: white;
-    border-radius: 16px;
-    padding: 32px;
-    width: 100%; max-width: 460px;
-    animation: fadeUp .3s ease;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  }
-  @media (max-width: 480px) {
-    .modal { padding: 24px 18px; }
-  }
-
-  .form-input {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    font-family: 'Cairo', sans-serif;
-    font-size: 14px;
-    color: #1e293b;
-    background: #f8fafc;
-    outline: none;
-    transition: all .2s;
-  }
-  .form-input:focus { border-color: #1a56db; background: white; box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
-
-  .hero-bg-dot {
-    background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
-    background-size: 28px 28px;
-  }
-
-  .points-hero {
-    background: linear-gradient(135deg, #1a56db 0%, #0ea5e9 100%);
-    border-radius: 14px;
-    padding: 28px;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
-  .points-hero::after {
-    content: '';
-    position: absolute;
-    width: 180px; height: 180px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 50%;
-    bottom: -50px; left: -30px;
-  }
-
-  footer { background: linear-gradient(135deg, #1a56db 0%, #3b82f6 100%); }
-
-  #loginView {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f0f6ff 0%, #f8fafc 60%, #f0f9ff 100%);
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-  #loginView.active { display: flex; }
-
-  .login-card {
-    background: white;
-    border-radius: 18px;
-    box-shadow: 0 20px 60px rgba(26,86,219,0.1);
-    padding: 48px 42px;
-    width: 100%;
-    max-width: 420px;
-    border: 1px solid #e2e8f0;
-    animation: fadeUp .5s ease;
-  }
-  @media (max-width: 480px) {
-    .login-card { padding: 36px 22px; margin: 16px; }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
-  .col-2 { grid-column: span 2; }
-  .mb-5 { margin-bottom: 20px; }
-
-  .info-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 13.5px;
-    gap: 8px;
-  }
-  .info-row:last-child { border-bottom: none; }
-  .info-label { color: #64748b; font-weight: 500; flex-shrink: 0; }
-  .info-value { color: #1e293b; font-weight: 700; text-align: left; word-break: break-word; }
-
-  /* Reward card mobile */
-  @media (max-width: 480px) {
-    .reward-card { flex-wrap: wrap; gap: 10px; }
-    .reward-card .btn { width: 100%; justify-content: center; }
-  }
+.chat-overlay{display:none;position:absolute;bottom:24px;right:24px;width:280px;background:white;border:1.5px solid #B4B2A9;border-radius:12px;z-index:100;}
+.chat-overlay.open{display:block;}
+.chat-header{padding:14px 16px;background:var(--teal);color:white;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center;}
+.chat-header span{font-size:14px;font-weight:500;}
+.chat-close{background:none;border:none;color:white;cursor:pointer;font-size:18px;}
+.chat-msgs{padding:12px;height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+.msg{font-size:13px;padding:8px 12px;border-radius:8px;max-width:90%;}
+.msg.bot{background:var(--teal-light);color:var(--teal-dark);border:1px solid #9FE1CB;}
+.msg.user{background:var(--teal);color:white;align-self:flex-end;}
+.chat-input-row{display:flex;gap:6px;padding:10px 12px;border-top:1px solid #B4B2A9;}
+.chat-input{flex:1;font-size:13px;padding:7px 10px;border:1.5px solid #B4B2A9;border-radius:8px;color:var(--text);}
+.chat-send{background:var(--teal);color:white;border:none;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px;}
+.chat-fab{position:absolute;bottom:24px;right:24px;background:var(--teal);color:white;width:52px;height:52px;border-radius:50%;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:22px;border:2px solid var(--teal-dark);}
 </style>
-</head>
-<body>
 
-<!-- SIDEBAR USER -->
-<div class="sidebar-overlay" id="uSidebarOverlay" onclick="closeSb('u')"></div>
-<div class="mobile-sidebar" id="uSidebar">
-  <div class="sb-header">
-    <div class="flex items-center gap-2">
-      <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#1a56db,#0ea5e9);display:flex;align-items:center;justify-content:center">
-        <i class="ri-steering-2-line text-white" style="font-size:14px"></i>
-      </div>
-      <span class="font-['Pacifico'] text-lg text-primary">SmartDrive</span>
+<div id="app">
+  <nav class="nav">
+    <div class="logo"><div class="logo-dot"></div> أَحيِها</div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="goto('landing')">الرئيسية</button>
+      <button class="nav-btn" onclick="goto('scan')">الفحص</button>
+      <button class="nav-btn" onclick="goto('guide')">دليل الإصلاح</button>
+      <button class="nav-btn" onclick="goto('rewards')">النقاط</button>
+      <button class="nav-btn" onclick="goto('community')">المجتمع</button>
     </div>
-    <button class="sb-close" onclick="closeSb('u')"><i class="ri-close-line"></i></button>
-  </div>
-  <div class="sb-user">
-    <div class="sb-avatar" style="background:linear-gradient(135deg,#1a56db,#0ea5e9)" id="sbUAvatar">أح</div>
-    <div><p style="font-size:14px;font-weight:700;color:#1e293b" id="sbUName">أحمد محمد</p><p style="font-size:11px;color:#94a3b8">سائق</p></div>
-  </div>
-  <div class="sb-links">
-    <button class="sb-link active" id="usb-0" onclick="sbUserGo('uDash',0)"><i class="ri-dashboard-line"></i> لوحة التحكم</button>
-    <button class="sb-link" id="usb-1" onclick="sbUserGo('uReports',1)"><i class="ri-file-chart-line"></i> التقارير</button>
-    <button class="sb-link" id="usb-2" onclick="sbUserGo('uRewards',2)"><i class="ri-gift-line"></i> المكافآت</button>
-    <button class="sb-link" id="usb-3" onclick="sbUserGo('uProfile',3)"><i class="ri-user-3-line"></i> الملف الشخصي</button>
-  </div>
-  <div class="sb-footer">
-    <button class="sb-link danger" onclick="logout()"><i class="ri-logout-box-r-line"></i> خروج</button>
-  </div>
-</div>
-
-<!-- SIDEBAR ADMIN -->
-<div class="sidebar-overlay" id="aSidebarOverlay" onclick="closeSb('a')"></div>
-<div class="mobile-sidebar" id="aSidebar">
-  <div class="sb-header">
-    <div class="flex items-center gap-2">
-      <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#1a56db,#0ea5e9);display:flex;align-items:center;justify-content:center">
-        <i class="ri-steering-2-line text-white" style="font-size:14px"></i>
-      </div>
-      <span class="font-['Pacifico'] text-lg text-primary">SmartDrive</span>
-      <span style="font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626;padding:2px 7px;border-radius:99px">ADMIN</span>
-    </div>
-    <button class="sb-close" onclick="closeSb('a')"><i class="ri-close-line"></i></button>
-  </div>
-  <div class="sb-user">
-    <div class="sb-avatar" style="background:linear-gradient(135deg,#ef4444,#f97316)">مد</div>
-    <div><p style="font-size:14px;font-weight:700;color:#1e293b">مدير النظام</p><p style="font-size:11px;color:#94a3b8">Admin</p></div>
-  </div>
-  <div class="sb-links">
-    <button class="sb-link active" id="asb-0" onclick="sbAdminGo('aDash',0)"><i class="ri-dashboard-line"></i> لوحة التحكم</button>
-    <button class="sb-link" id="asb-1" onclick="sbAdminGo('aUsers',1)"><i class="ri-group-line"></i> المستخدمون</button>
-    <button class="sb-link" id="asb-2" onclick="sbAdminGo('aRewards',2)"><i class="ri-gift-line"></i> المكافآت</button>
-    <button class="sb-link" id="asb-3" onclick="sbAdminGo('aReports',3)"><i class="ri-file-chart-line"></i> التقارير</button>
-  </div>
-  <div class="sb-footer">
-    <button class="sb-link danger" onclick="logout()"><i class="ri-logout-box-r-line"></i> خروج</button>
-  </div>
-</div>
-
-
-<!-- LOGIN -->
-<div id="loginView" class="view active">
-  <div class="hero-bg-dot absolute inset-0 opacity-40 pointer-events-none"></div>
-  <div class="login-card relative z-10">
-    <div class="flex items-center justify-center gap-3 mb-8">
-      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow">
-        <i class="ri-steering-2-line text-white text-xl"></i>
-      </div>
-      <span class="font-['Pacifico'] text-2xl text-primary">SmartDrive</span>
-    </div>
-    <h1 class="text-xl font-bold text-center text-slate-800 mb-1">مرحباً بعودتك</h1>
-    <p class="text-center text-sm text-slate-400 mb-7">سجّل الدخول للوصول إلى لوحة التحكم</p>
-    <div class="mb-4">
-      <label class="block text-xs font-700 text-slate-500 mb-1.5">اسم المستخدم</label>
-      <div class="relative">
-        <i class="ri-user-3-line absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-base"></i>
-        <input id="uInput" class="form-input pr-10" placeholder="أدخل اسم المستخدم">
-      </div>
-    </div>
-    <div class="mb-6">
-      <label class="block text-xs font-700 text-slate-500 mb-1.5">كلمة المرور</label>
-      <div class="relative">
-        <i class="ri-lock-line absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-base"></i>
-        <input id="pInput" type="password" class="form-input pr-10" placeholder="••••••••">
-      </div>
-    </div>
-    <button onclick="doLogin()" class="btn btn-primary w-full justify-center text-base py-3">
-      <i class="ri-login-box-line"></i> تسجيل الدخول
-    </button>
-    <p class="text-center text-xs text-slate-300 mt-6 pt-5 border-t border-slate-100">
-      ادخل <span class="text-slate-500 font-semibold">user</span> للسائق &nbsp;|&nbsp; <span class="text-slate-500 font-semibold">admin</span> للمدير
-    </p>
-  </div>
-</div>
-
-
-<!-- USER VIEW -->
-<div id="userView" class="view">
-
-  <nav class="fixed top-0 left-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm" style="height:60px">
-    <div class="h-full flex items-center justify-between px-6 md:px-10 max-w-screen-xl mx-auto">
-      <div class="flex items-center gap-2.5">
-        <button class="hamburger" onclick="openSb('u')"><i class="ri-menu-line"></i></button>
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-          <i class="ri-steering-2-line text-white text-sm"></i>
-        </div>
-        <span class="font-['Pacifico'] text-lg text-primary">SmartDrive</span>
-      </div>
-      <div class="desktop-only hidden md:flex items-center gap-1" id="userNavLinks">
-        <button class="nav-link active" onclick="showUserTab('uDash',this)"><i class="ri-dashboard-line ml-1"></i>لوحة التحكم</button>
-        <button class="nav-link" onclick="showUserTab('uReports',this)"><i class="ri-file-chart-line ml-1"></i>التقارير</button>
-        <button class="nav-link" onclick="showUserTab('uRewards',this)"><i class="ri-gift-line ml-1"></i>المكافآت</button>
-        <button class="nav-link" onclick="showUserTab('uProfile',this)"><i class="ri-user-3-line ml-1"></i>الملف الشخصي</button>
-        <button class="nav-link danger" onclick="logout()"><i class="ri-logout-box-r-line ml-1"></i>خروج</button>
-      </div>
-      <div class="flex items-center gap-2.5">
-        <div class="text-right hide-mobile">
-          <p id="uNavName" class="text-sm font-bold text-slate-800">أحمد محمد</p>
-          <p class="text-xs text-slate-400">سائق</p>
-        </div>
-        <div id="uAvatar" class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-sm font-bold cursor-pointer">أح</div>
-      </div>
-    </div>
+    <button class="nav-cta" onclick="goto('scan')">ابدأ الفحص</button>
   </nav>
 
-  <div style="height:60px"></div>
-
-  <!-- DASHBOARD -->
-  <div id="uDash" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8">
-    <div class="rounded-2xl bg-gradient-to-r from-primary to-accent text-white p-6 mb-6 relative overflow-hidden">
-      <div class="absolute inset-0 hero-bg-dot opacity-10 pointer-events-none"></div>
-      <div class="relative z-10">
-        <p class="text-white/70 text-sm mb-1">مساء الخير،</p>
-        <h2 class="text-2xl font-bold mb-1" id="uWelcomeName">أحمد محمد العمري</h2>
-        <p class="text-white/80 text-sm">رحلتك الأخيرة كانت <strong>ممتازة</strong> – استمر على هذا المستوى!</p>
-      </div>
-      <div class="absolute left-6 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/10 flex items-center justify-center hide-mobile">
-        <i class="ri-steering-2-line text-4xl text-white/60"></i>
-      </div>
+  <div id="p-landing" class="page active">
+    <div class="hero">
+      <div class="badge">منصة الاستدامة الذكية</div>
+      <h1>لا ترمِها،<br>نحن نساعدك على <span>إحيائها</span></h1>
+      <p>باستخدام التوأم الرقمي والذكاء الاصطناعي، نشخّص عطل أي جهاز ونرشدك لإصلاحه خطوة بخطوة.</p>
+      <button class="cta-btn" onclick="goto('scan')">ابدأ الفحص الآن</button>
+     
     </div>
-
-    <div class="grid-4 mb-5">
-      <div class="stat-card"><div class="stat-icon bg-blue-50"><i class="ri-medal-line text-primary text-xl"></i></div><div><p class="text-xs text-slate-400 mb-0.5">إجمالي النقاط</p><p class="text-2xl font-black text-slate-900" id="totalPts">750</p><p class="text-xs text-slate-400">نقطة</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-emerald-50"><i class="ri-route-line text-success text-xl"></i></div><div><p class="text-xs text-slate-400 mb-0.5">رحلات الشهر</p><p class="text-2xl font-black text-slate-900">38</p><p class="text-xs text-slate-400">رحلة</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-amber-50"><i class="ri-speed-line text-warning text-xl"></i></div><div><p class="text-xs text-slate-400 mb-0.5">نقاط السلوك</p><p class="text-2xl font-black text-slate-900">82</p><p class="text-xs text-slate-400">من 100</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-red-50"><i class="ri-alarm-warning-line text-danger text-xl"></i></div><div><p class="text-xs text-slate-400 mb-0.5">تنبيهات</p><p class="text-2xl font-black text-slate-900">3</p><p class="text-xs text-slate-400">هذا الشهر</p></div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="counter1">0</div><div class="stat-label">كيلوغرام نفايات تم تجنبها</div></div>
+      <div class="stat-card"><div class="stat-num" id="counter2">0</div><div class="stat-label">إصلاح ناجح حتى الآن</div></div>
+      <div class="stat-card"><div class="stat-num" id="counter3">0</div><div class="stat-label">مستخدم نشط</div></div>
     </div>
-
-    <div class="grid-2 mb-5">
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-user-3-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">بيانات المستخدم</span></div>
-        <div class="info-row"><span class="info-label">الاسم الكامل</span><span class="info-value">أحمد محمد العمري</span></div>
-        <div class="info-row"><span class="info-label">العمر</span><span class="info-value">32 سنة</span></div>
-        <div class="info-row"><span class="info-label">رقم الجوال</span><span class="info-value">+966 50 123 4567</span></div>
-        <div class="info-row"><span class="info-label">البريد</span><span class="info-value" style="font-size:12px">ahmed@example.com</span></div>
-        <div class="info-row"><span class="info-label">تاريخ التسجيل</span><span class="info-value">يناير 2024</span></div>
-      </div>
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-car-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">بيانات السيارة</span></div>
-        <div class="info-row"><span class="info-label">النوع</span><span class="info-value">تويوتا كامري</span></div>
-        <div class="info-row"><span class="info-label">سنة الصنع</span><span class="info-value">2022</span></div>
-        <div class="info-row"><span class="info-label">رقم اللوحة</span><span class="info-value"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">أ ب ج - 1234</code></span></div>
-        <div class="info-row"><span class="info-label">اللون</span><span class="info-value">أبيض</span></div>
-        <div class="info-row"><span class="info-label">رقم الهيكل</span><span class="info-value" style="font-size:11px;color:#94a3b8">VIN-JT2BF22K9W0</span></div>
-      </div>
-    </div>
-
-    <div class="grid-2 mb-5">
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center"><i class="ri-checkbox-circle-line text-success text-sm"></i></div><span class="text-sm font-bold text-slate-700">سلوكيات إيجابية</span></div>
-        <div class="flex flex-col gap-2">
-          <div class="point-item bg-emerald-50 text-emerald-800"><i class="ri-checkbox-circle-fill text-success"></i> تسارع معتدل ومنتظم<span class="mr-auto badge" style="background:#059669;color:white">+30</span></div>
-          <div class="point-item bg-emerald-50 text-emerald-800"><i class="ri-checkbox-circle-fill text-success"></i> فرملة سلسة وتدريجية<span class="mr-auto badge" style="background:#059669;color:white">+25</span></div>
-          <div class="point-item bg-emerald-50 text-emerald-800"><i class="ri-checkbox-circle-fill text-success"></i> الالتزام بالسرعة المحددة<span class="mr-auto badge" style="background:#059669;color:white">+20</span></div>
-          <div class="point-item bg-emerald-50 text-emerald-800"><i class="ri-checkbox-circle-fill text-success"></i> قيادة دون انحراف مفاجئ<span class="mr-auto badge" style="background:#059669;color:white">+15</span></div>
-          <div class="point-item bg-emerald-50 text-emerald-800"><i class="ri-checkbox-circle-fill text-success"></i> استخدام الأحزمة بانتظام<span class="mr-auto badge" style="background:#059669;color:white">+10</span></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center"><i class="ri-error-warning-line text-warning text-sm"></i></div><span class="text-sm font-bold text-slate-700">نقاط تحتاج تحسين</span></div>
-        <div class="flex flex-col gap-2">
-          <div class="point-item bg-red-50 text-red-800"><i class="ri-close-circle-fill text-danger"></i> فرملة مفاجئة (3 مرات)<span class="mr-auto badge bg-red-100 text-red-700">−15</span></div>
-          <div class="point-item bg-amber-50 text-amber-800"><i class="ri-error-warning-fill text-warning"></i> تجاوز السرعة المسموحة<span class="mr-auto badge bg-amber-100 text-amber-700">−10</span></div>
-          <div class="point-item bg-amber-50 text-amber-800"><i class="ri-error-warning-fill text-warning"></i> قيادة ليلية متأخرة<span class="mr-auto badge bg-amber-100 text-amber-700">−5</span></div>
-          <div class="point-item bg-red-50 text-red-800"><i class="ri-close-circle-fill text-danger"></i> تسارع مفاجئ (مرتين)<span class="mr-auto badge bg-red-100 text-red-700">−10</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card mb-5">
-      <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-line-chart-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">تقرير القيادة الشهري</span></div>
-        <button class="btn btn-outline btn-sm" onclick="fakeDownload()"><i class="ri-download-cloud-line"></i> تحميل PDF</button>
-      </div>
-      <div style="height:240px"><canvas id="dashChart"></canvas></div>
-      <div class="grid-3 mt-4">
-        <div class="text-center p-3 bg-slate-50 rounded-xl"><p class="text-xs text-slate-400 mb-1">عدد الرحلات</p><p class="text-xl font-black text-slate-900">38</p></div>
-        <div class="text-center p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-success mb-1">نقاط المكافأة</p><p class="text-xl font-black text-success">+100</p></div>
-        <div class="text-center p-3 bg-amber-50 rounded-xl"><p class="text-xs text-warning mb-1">نقاط التحسين</p><p class="text-xl font-black text-warning">3</p></div>
-      </div>
+    <div class="features">
+      <div class="feature-card" onclick="goto('scan')"><div class="feature-icon" style="background:var(--teal-light);border:1px solid #9FE1CB;">🔍</div><h3>فحص ذكي بالصورة</h3><p>ارفع صورة الجهاز التالف وسنحدد مكان العطل تلقائياً</p></div>
+      <div class="feature-card" onclick="goto('guide')"><div class="feature-icon" style="background:var(--amber-light);border:1px solid #FAC775;">📋</div><h3>دليل إصلاح تفاعلي</h3><p>خطوات مصورة مع مساعد ذكي جاهز للإجابة على أي سؤال</p></div>
+      <div class="feature-card" onclick="goto('rewards')"><div class="feature-icon" style="background:var(--green-light);border:1px solid #C0DD97;">🌱</div><h3>نقاط واستدامة</h3><p>اكسب نقاطاً مع كل إصلاح واستبدلها بمكافآت حقيقية</p></div>
+      <div class="feature-card" onclick="goto('community')"><div class="feature-icon" style="background:var(--purple-light);border:1px solid #CECBF6;">👥</div><h3>مجتمع الخبراء</h3><p>تواصل مع فنيين متطوعين وشارك قصة إصلاحك</p></div>
     </div>
   </div>
 
-  <!-- REPORTS -->
-  <div id="uReports" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-      <h1 class="text-xl font-black text-slate-900 flex items-center gap-2"><i class="ri-file-chart-2-line text-primary"></i> التقارير التفصيلية</h1>
-      <button class="btn btn-outline btn-sm" onclick="fakeDownload()"><i class="ri-download-cloud-line"></i> تصدير PDF</button>
-    </div>
-    <div class="card mb-5">
-      <div class="flex items-center gap-2 mb-5"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-bar-chart-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">تقرير شهر فبراير 2025</span></div>
-      <div style="height:260px"><canvas id="repChart"></canvas></div>
-    </div>
-    <div class="grid-2 mb-5">
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-speed-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">تحليل السرعة</span></div>
-        <div class="mb-3"><div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>ضمن الحدود</span><span class="font-bold">78%</span></div><div class="progress-bar"><div class="progress-fill bg-emerald-500" style="width:78%"></div></div></div>
-        <div class="mb-3"><div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>تجاوز طفيف</span><span class="font-bold">15%</span></div><div class="progress-bar"><div class="progress-fill bg-blue-500" style="width:15%"></div></div></div>
-        <div><div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>تجاوز خطير</span><span class="font-bold">7%</span></div><div class="progress-bar"><div class="progress-fill bg-red-500" style="width:7%"></div></div></div>
-      </div>
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-roadster-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">تحليل الفرملة</span></div>
-        <div class="mb-3"><div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>فرملة سلسة</span><span class="font-bold">85%</span></div><div class="progress-bar"><div class="progress-fill bg-emerald-500" style="width:85%"></div></div></div>
-        <div class="mb-3"><div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>فرملة متوسطة</span><span class="font-bold">10%</span></div><div class="progress-bar"><div class="progress-fill bg-blue-500" style="width:10%"></div></div></div>
-        <div><div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>فرملة مفاجئة</span><span class="font-bold">5%</span></div><div class="progress-bar"><div class="progress-fill bg-red-500" style="width:5%"></div></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-list-check-3 text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">سجل الرحلات</span></div>
-      <div class="table-wrap">
-        <table class="data-table mobile-cards">
-          <thead><tr><th>التاريخ</th><th>المدة</th><th>المسافة</th><th>السلوك</th><th>النقاط</th></tr></thead>
-          <tbody>
-            <tr>
-              <td data-label="التاريخ">24 فبراير</td>
-              <td data-label="المدة">45 د</td>
-              <td data-label="المسافة">32 كم</td>
-              <td data-label="السلوك"><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td>
-              <td data-label="النقاط"><span class="text-success font-bold">+15</span></td>
-            </tr>
-            <tr>
-              <td data-label="التاريخ">23 فبراير</td>
-              <td data-label="المدة">20 د</td>
-              <td data-label="المسافة">14 كم</td>
-              <td data-label="السلوك"><span class="badge bg-blue-100 text-blue-700">جيد</span></td>
-              <td data-label="النقاط"><span class="text-primary font-bold">+8</span></td>
-            </tr>
-            <tr>
-              <td data-label="التاريخ">22 فبراير</td>
-              <td data-label="المدة">60 د</td>
-              <td data-label="المسافة">55 كم</td>
-              <td data-label="السلوك"><span class="badge bg-amber-100 text-amber-700">مقبول</span></td>
-              <td data-label="النقاط"><span class="text-warning font-bold">+5</span></td>
-            </tr>
-            <tr>
-              <td data-label="التاريخ">21 فبراير</td>
-              <td data-label="المدة">35 د</td>
-              <td data-label="المسافة">28 كم</td>
-              <td data-label="السلوك"><span class="badge bg-red-100 text-red-700">يحتاج تحسين</span></td>
-              <td data-label="النقاط"><span class="text-danger font-bold">−5</span></td>
-            </tr>
-            <tr>
-              <td data-label="التاريخ">20 فبراير</td>
-              <td data-label="المدة">50 د</td>
-              <td data-label="المسافة">40 كم</td>
-              <td data-label="السلوك"><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td>
-              <td data-label="النقاط"><span class="text-success font-bold">+12</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- REWARDS -->
-  <div id="uRewards" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <h1 class="text-xl font-black text-slate-900 flex items-center gap-2 mb-6"><i class="ri-gift-2-line text-primary"></i> المكافآت</h1>
-    <div class="rewards-grid grid-2 mb-5" style="grid-template-columns:1fr 2fr">
-      <div class="points-hero">
-        <p class="text-white/70 text-xs mb-1 relative z-10">رصيد النقاط الحالي</p>
-        <p class="text-5xl font-black text-white relative z-10" id="ptsBal">750</p>
-        <p class="text-white/60 text-xs mt-1 relative z-10">نقطة متاحة للاستبدال</p>
-        <div class="absolute left-4 bottom-4 z-10"><i class="ri-medal-line text-5xl text-white/20"></i></div>
-      </div>
-      <div class="card">
-        <div class="flex items-center gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-history-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">تاريخ النقاط</span></div>
-        <div class="info-row"><span class="info-label">نقاط فبراير</span><span class="info-value text-success">+100</span></div>
-        <div class="info-row"><span class="info-label">نقاط يناير</span><span class="info-value text-success">+150</span></div>
-        <div class="info-row"><span class="info-label">نقاط ديسمبر</span><span class="info-value text-success">+200</span></div>
-      </div>
-    </div>
-    <p class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2"><i class="ri-gift-line text-primary"></i> المكافآت المتاحة</p>
-    <div class="flex flex-col gap-3">
-      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0"><i class="ri-shield-check-line text-primary text-2xl"></i></div><div class="flex-1 min-w-0"><p class="font-bold text-slate-800 text-sm">خصم على التأمين</p><p class="text-xs text-slate-400">خصم 15% على تأمين سيارتك · <strong class="text-primary">500 نقطة</strong></p></div><button class="btn btn-primary btn-sm flex-shrink-0" onclick="redeem(this,500,'خصم التأمين')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
-      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center flex-shrink-0"><i class="ri-sparkling-line text-sky-500 text-2xl"></i></div><div class="flex-1 min-w-0"><p class="font-bold text-slate-800 text-sm">تنظيف السيارة</p><p class="text-xs text-slate-400">غسيل وتلميع شامل · <strong class="text-primary">200 نقطة</strong></p></div><button class="btn btn-primary btn-sm flex-shrink-0" onclick="redeem(this,200,'تنظيف السيارة')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
-      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0"><i class="ri-tools-line text-amber-500 text-2xl"></i></div><div class="flex-1 min-w-0"><p class="font-bold text-slate-800 text-sm">خدمات صيانة إضافية</p><p class="text-xs text-slate-400">فحص وصيانة شاملة · <strong class="text-primary">300 نقطة</strong></p></div><button class="btn btn-primary btn-sm flex-shrink-0" onclick="redeem(this,300,'خدمات الصيانة')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
-      <div class="reward-card"><div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0"><i class="ri-gas-station-line text-success text-2xl"></i></div><div class="flex-1 min-w-0"><p class="font-bold text-slate-800 text-sm">كرت وقود</p><p class="text-xs text-slate-400">بقيمة 50 ريال · <strong class="text-primary">400 نقطة</strong></p></div><button class="btn btn-primary btn-sm flex-shrink-0" onclick="redeem(this,400,'كرت وقود')"><i class="ri-exchange-funds-line"></i> استبدل</button></div>
-    </div>
-  </div>
-
-  <!-- PROFILE -->
-  <div id="uProfile" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <h1 class="text-xl font-black text-slate-900 flex items-center gap-2 mb-6"><i class="ri-user-settings-line text-primary"></i> الملف الشخصي</h1>
-    <div class="grid-2">
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-edit-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">تعديل البيانات</span></div>
-        <div class="mb-3"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">الاسم الكامل</label><input class="form-input" value="أحمد محمد العمري"></div>
-        <div class="mb-3"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">البريد الإلكتروني</label><input class="form-input" value="ahmed@example.com"></div>
-        <div class="mb-3"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">رقم الجوال</label><input class="form-input" value="+966 50 123 4567"></div>
-        <div class="mb-5"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">العنوان</label><input class="form-input" value="الرياض، المملكة العربية السعودية"></div>
-        <button class="btn btn-primary" onclick="toast('تم حفظ التغييرات بنجاح','success')"><i class="ri-save-3-line"></i> حفظ التغييرات</button>
-      </div>
+  <div id="p-scan" class="page">
+    <div class="page-header"><h2>لوحة الفحص والتشخيص</h2><p>ارفع صورة أو صف المشكلة وسنعرض لك التوأم الرقمي للقطعة</p></div>
+    <div class="scan-grid">
       <div>
-        <div class="card mb-4">
-          <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-lock-password-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">تغيير كلمة المرور</span></div>
-          <div class="mb-3"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">الحالية</label><input class="form-input" type="password" placeholder="••••••••"></div>
-          <div class="mb-3"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">الجديدة</label><input class="form-input" type="password" placeholder="••••••••"></div>
-          <div class="mb-5"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">التأكيد</label><input class="form-input" type="password" placeholder="••••••••"></div>
-          <button class="btn btn-outline" onclick="toast('تم تغيير كلمة المرور','success')"><i class="ri-key-2-line"></i> تحديث</button>
+        <div class="upload-zone" onclick="showUploadResult()">
+          <div class="upload-icon">📷</div>
+          <h3>ارفع صورة الجهاز</h3>
+          <p>يدعم JPG, PNG, HEIC</p>
+          <button class="upload-btn">اختر ملفاً</button>
         </div>
-        <div class="card">
-          <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-trophy-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">ملخص الإنجازات</span></div>
-          <div class="info-row"><span class="info-label">مستوى القيادة</span><span class="info-value"><span class="badge bg-emerald-100 text-emerald-700"><i class="ri-star-fill ml-1"></i>متميز</span></span></div>
-          <div class="info-row"><span class="info-label">إجمالي الرحلات</span><span class="info-value">432</span></div>
-          <div class="info-row"><span class="info-label">إجمالي المسافة</span><span class="info-value">12,450 كم</span></div>
-          <div class="info-row"><span class="info-label">مكافآت مستبدلة</span><span class="info-value">7</span></div>
+        <div class="desc-panel">
+          <p style="font-size:13px;color:var(--text-sec);margin-bottom:8px;">أو اكتب وصف المشكلة:</p>
+          <textarea style="width:100%;font-size:13px;padding:8px;border:1.5px solid #B4B2A9;border-radius:8px;height:80px;resize:none;color:var(--text);" placeholder="مثال: مروحة اللابتوب تصدر صوتاً غريباً..."></textarea>
+          <button style="margin-top:8px;width:100%;font-size:13px;padding:9px;background:var(--teal);color:white;border:none;border-radius:8px;cursor:pointer;" onclick="showUploadResult()">تحليل بالذكاء الاصطناعي</button>
         </div>
       </div>
-    </div>
-  </div>
-
-  <footer class="mt-16 py-6 text-center text-white">
-    <div class="max-w-screen-xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p class="text-sm opacity-80">© 2025 SmartDrive – جميع الحقوق محفوظة</p>
-      <div class="flex gap-6 text-sm opacity-70">
-        <span class="cursor-pointer hover:opacity-100 transition">الدعم الفني</span>
-        <span class="cursor-pointer hover:opacity-100 transition">سياسة الخصوصية</span>
-        <span class="cursor-pointer hover:opacity-100 transition">الشروط والأحكام</span>
-      </div>
-    </div>
-  </footer>
-</div>
-
-
-<!-- ADMIN VIEW -->
-<div id="adminView" class="view">
-
-  <nav class="fixed top-0 left-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm" style="height:60px">
-    <div class="h-full flex items-center justify-between px-6 md:px-10 max-w-screen-xl mx-auto">
-      <div class="flex items-center gap-2.5">
-        <button class="hamburger" onclick="openSb('a')"><i class="ri-menu-line"></i></button>
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-          <i class="ri-steering-2-line text-white text-sm"></i>
+      <div class="twin-panel">
+        <div class="twin-title">التوأم الرقمي</div>
+        <div class="twin-viz">
+          <div class="twin-pulse">💻</div>
+          <div class="twin-dot" style="top:30px;left:80px;opacity:0.5;"></div>
+          <div class="twin-dot" style="top:60px;right:60px;opacity:0.7;"></div>
         </div>
-        <span class="font-['Pacifico'] text-lg text-primary">SmartDrive</span>
-        <span class="text-xs font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full mr-1">ADMIN</span>
-      </div>
-      <div class="desktop-only hidden md:flex items-center gap-1" id="adminNavLinks">
-        <button class="nav-link active" onclick="showAdminTab('aDash',this)"><i class="ri-dashboard-line ml-1"></i>لوحة التحكم</button>
-        <button class="nav-link" onclick="showAdminTab('aUsers',this)"><i class="ri-group-line ml-1"></i>المستخدمون</button>
-        <button class="nav-link" onclick="showAdminTab('aRewards',this)"><i class="ri-gift-line ml-1"></i>المكافآت</button>
-        <button class="nav-link" onclick="showAdminTab('aReports',this)"><i class="ri-file-chart-line ml-1"></i>التقارير</button>
-        <button class="nav-link danger" onclick="logout()"><i class="ri-logout-box-r-line ml-1"></i>خروج</button>
-      </div>
-      <div class="flex items-center gap-2.5">
-        <div class="hide-mobile text-right"><p class="text-sm font-bold text-slate-800">مدير النظام</p><p class="text-xs text-slate-400">Admin</p></div>
-        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-red-500 to-orange-400 flex items-center justify-center text-white text-sm font-bold">مد</div>
+        <div class="repair-bar">
+          <div class="repair-label"><span>قابلية الإصلاح</span><span id="repair-pct">—</span></div>
+          <div class="bar-track"><div class="bar-fill" id="repair-bar-fill"></div></div>
+        </div>
+        <div id="twin-result" style="margin-top:12px;display:none;">
+          <p style="font-size:12px;color:rgba(255,255,255,0.85);">تم تحديد العطل: <strong style="color:#5DCAA5;">مروحة التبريد</strong></p>
+          <p style="font-size:12px;color:rgba(255,255,255,0.65);margin-top:4px;">السبب المحتمل: تراكم الغبار وانسداد مجرى الهواء</p>
+          <button style="margin-top:12px;width:100%;font-size:12px;padding:8px;background:#5DCAA5;color:var(--teal-dark);border:none;border-radius:8px;cursor:pointer;font-weight:500;" onclick="goto('guide')">عرض دليل الإصلاح</button>
+        </div>
       </div>
     </div>
-  </nav>
-
-  <div style="height:60px"></div>
-
-  <!-- ADMIN DASH -->
-  <div id="aDash" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8">
-    <div class="rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700 text-white p-6 mb-6 relative overflow-hidden">
-      <div class="absolute inset-0 hero-bg-dot opacity-5 pointer-events-none"></div>
-      <div class="relative z-10">
-        <p class="text-white/60 text-sm mb-1">نظرة عامة</p>
-        <h2 class="text-2xl font-bold">لوحة تحكم المدير</h2>
-        <p class="text-white/70 text-sm mt-1">آخر تحديث: اليوم – 24 فبراير 2025</p>
-      </div>
-      <div class="absolute left-6 top-1/2 -translate-y-1/2 hide-mobile"><i class="ri-shield-star-line text-5xl text-white/10"></i></div>
-    </div>
-    <div class="grid-4 mb-5">
-      <div class="stat-card"><div class="stat-icon bg-blue-50"><i class="ri-group-line text-primary text-xl"></i></div><div><p class="text-xs text-slate-400 mb-0.5">إجمالي المستخدمين</p><p class="text-2xl font-black">142</p><p class="text-xs text-slate-400">نشط</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-emerald-50"><i class="ri-route-line text-success text-xl"></i></div><div><p class="text-xs text-slate-400 mb-0.5">رحلات اليوم</p><p class="text-2xl font-black">284</p><p class="text-xs text-slate-400">رحلة</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-amber-50"><i class="ri-medal-line text-warning text-xl"></i></div><div><p class="text-xs text-slate-400 mb-0.5">نقاط محولة</p><p class="text-2xl font-black">8,450</p><p class="text-xs text-slate-400">هذا الشهر</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-red-50"><i class="ri-alarm-warning-line text-danger text-xl"></i></div><div><p class="text-xs text-slate-400 mb-0.5">تنبيهات نشطة</p><p class="text-2xl font-black">17</p><p class="text-xs text-slate-400">للمراجعة</p></div></div>
-    </div>
-    <div class="card mb-5">
-      <div class="flex items-center gap-2 mb-5"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-bar-chart-grouped-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">نظرة عامة على الأداء</span></div>
-      <div style="height:250px"><canvas id="adminDashChart"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center"><i class="ri-trophy-line text-warning text-sm"></i></div><span class="text-sm font-bold text-slate-700">أفضل السائقين هذا الشهر</span></div>
-      <div class="table-wrap">
-        <table class="data-table mobile-cards">
-          <thead><tr><th>#</th><th>الاسم</th><th>نقاط القيادة</th><th>الرحلات</th><th>التقييم</th></tr></thead>
-          <tbody>
-            <tr>
-              <td data-label="#" class="font-bold text-amber-500">1</td>
-              <td data-label="الاسم">سارة أحمد</td>
-              <td data-label="نقاط القيادة" class="font-bold text-primary">95</td>
-              <td data-label="الرحلات">52</td>
-              <td data-label="التقييم"><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td>
-            </tr>
-            <tr>
-              <td data-label="#" class="font-bold text-slate-400">2</td>
-              <td data-label="الاسم">محمد علي</td>
-              <td data-label="نقاط القيادة" class="font-bold text-primary">91</td>
-              <td data-label="الرحلات">48</td>
-              <td data-label="التقييم"><span class="badge bg-emerald-100 text-emerald-700">ممتاز</span></td>
-            </tr>
-            <tr>
-              <td data-label="#" class="font-bold text-slate-400">3</td>
-              <td data-label="الاسم">أحمد محمد</td>
-              <td data-label="نقاط القيادة" class="font-bold text-primary">82</td>
-              <td data-label="الرحلات">38</td>
-              <td data-label="التقييم"><span class="badge bg-blue-100 text-blue-700">جيد جداً</span></td>
-            </tr>
-            <tr>
-              <td data-label="#" class="font-bold text-slate-400">4</td>
-              <td data-label="الاسم">فاطمة عمر</td>
-              <td data-label="نقاط القيادة" class="font-bold text-primary">79</td>
-              <td data-label="الرحلات">41</td>
-              <td data-label="التقييم"><span class="badge bg-blue-100 text-blue-700">جيد جداً</span></td>
-            </tr>
-            <tr>
-              <td data-label="#" class="font-bold text-slate-400">5</td>
-              <td data-label="الاسم">خالد يوسف</td>
-              <td data-label="نقاط القيادة" class="font-bold text-primary">71</td>
-              <td data-label="الرحلات">29</td>
-              <td data-label="التقييم"><span class="badge bg-amber-100 text-amber-700">مقبول</span></td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="quick-diagnose">
+      <h3>تشخيص سريع حسب نوع الجهاز</h3>
+      <div class="diagnose-items">
+        <div class="d-item" onclick="selectDevice(this,'💻')"><span>💻</span>لابتوب</div>
+        <div class="d-item" onclick="selectDevice(this,'📱')"><span>📱</span>جوال</div>
+        <div class="d-item" onclick="selectDevice(this,'📺')"><span>📺</span>تلفزيون</div>
+        <div class="d-item" onclick="selectDevice(this,'🧊')"><span>🧊</span>ثلاجة</div>
+        <div class="d-item" onclick="selectDevice(this,'🫧')"><span>🫧</span>غسالة</div>
+        <div class="d-item" onclick="selectDevice(this,'❄️')"><span>❄️</span>مكيف</div>
       </div>
     </div>
   </div>
 
-  <!-- ADMIN USERS -->
-  <div id="aUsers" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-      <h1 class="text-xl font-black text-slate-900 flex items-center gap-2"><i class="ri-group-2-line text-primary"></i> إدارة المستخدمين</h1>
-      <button class="btn btn-primary btn-sm" onclick="toast('سيتم إضافة المستخدم قريباً')"><i class="ri-user-add-line"></i> إضافة مستخدم</button>
-    </div>
-    <div class="card">
-      <div class="table-wrap">
-        <table class="data-table mobile-cards">
-          <thead><tr><th>المستخدم</th><th>السيارة</th><th>اللوحة</th><th>النقاط</th><th>المكافآت</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-          <tbody>
-            <tr>
-              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">أحمد محمد العمري</div><div class="text-xs text-slate-400">ahmed@example.com</div></td>
-              <td data-label="السيارة">تويوتا كامري 2022</td>
-              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">أ ب ج - 1234</code></td>
-              <td data-label="النقاط" class="text-primary font-black text-lg">750</td>
-              <td data-label="المكافآت">2</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف أحمد محمد')"><i class="ri-eye-line"></i> عرض</button></td>
-            </tr>
-            <tr>
-              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">سارة أحمد الخالدي</div><div class="text-xs text-slate-400">sara@example.com</div></td>
-              <td data-label="السيارة">هوندا سيفيك 2023</td>
-              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">س ر ع - 5678</code></td>
-              <td data-label="النقاط" class="text-success font-black text-lg">1,200</td>
-              <td data-label="المكافآت">4</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف سارة أحمد')"><i class="ri-eye-line"></i> عرض</button></td>
-            </tr>
-            <tr>
-              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">خالد يوسف المطيري</div><div class="text-xs text-slate-400">khalid@example.com</div></td>
-              <td data-label="السيارة">نيسان باترول 2021</td>
-              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">خ ل د - 9012</code></td>
-              <td data-label="النقاط" class="text-warning font-black text-lg">320</td>
-              <td data-label="المكافآت">1</td>
-              <td data-label="الحالة"><span class="badge bg-amber-100 text-amber-700">تحذير</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف خالد يوسف')"><i class="ri-eye-line"></i> عرض</button></td>
-            </tr>
-            <tr>
-              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">محمد علي الشهري</div><div class="text-xs text-slate-400">mohammed@example.com</div></td>
-              <td data-label="السيارة">لكزس ES 2022</td>
-              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">م ع ل - 3456</code></td>
-              <td data-label="النقاط" class="text-success font-black text-lg">980</td>
-              <td data-label="المكافآت">3</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف محمد علي')"><i class="ri-eye-line"></i> عرض</button></td>
-            </tr>
-            <tr>
-              <td data-label="المستخدم"><div class="font-bold text-slate-800 text-sm">فاطمة عمر الدوسري</div><div class="text-xs text-slate-400">fatima@example.com</div></td>
-              <td data-label="السيارة">كيا سبورتاج 2023</td>
-              <td data-label="اللوحة"><code class="bg-slate-100 px-2 py-0.5 rounded text-xs">ف ط م - 7890</code></td>
-              <td data-label="النقاط" class="text-primary font-black text-lg">650</td>
-              <td data-label="المكافآت">2</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشط</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('عرض ملف فاطمة عمر')"><i class="ri-eye-line"></i> عرض</button></td>
-            </tr>
-          </tbody>
-        </table>
+  <div id="p-guide" class="page" style="flex-direction:column;">
+    <div class="page-header"><h2>دليل الإصلاح التفاعلي</h2><p>إصلاح مروحة اللابتوب — 5 خطوات بسيطة</p></div>
+    <div class="guide-wrapper">
+      <div class="guide-layout" style="flex:1;">
+        <div class="guide-sidebar">
+          <ul class="step-list">
+            <li class="step-item active-step" onclick="setStep(0)"><div class="step-num">1</div>تجهيز المكان</li>
+            <li class="step-item" onclick="setStep(1)"><div class="step-num">2</div>فتح الغطاء</li>
+            <li class="step-item" onclick="setStep(2)"><div class="step-num">3</div>تنظيف المروحة</li>
+            <li class="step-item" onclick="setStep(3)"><div class="step-num">4</div>التأكد من الإصلاح</li>
+            <li class="step-item" onclick="setStep(4)"><div class="step-num">5</div>إغلاق الجهاز</li>
+          </ul>
+        </div>
+        <div class="guide-content">
+          <div class="step-visual" id="step-visual">🧰</div>
+          <h3 id="step-title">تجهيز المكان والأدوات</h3>
+          <p id="step-desc">أطفئ اللابتوب تماماً وافصله من الكهرباء. اختر سطحاً مستوياً ومضاءً. تأكد من وجود كافة الأدوات اللازمة أمامك قبل البدء.</p>
+          <div class="tools-needed">
+            <h4>🔧 الأدوات المطلوبة</h4>
+            <div class="tools-list" id="tools-list">
+              <span class="tool-tag">مفك Philips #0</span>
+              <span class="tool-tag">فرشاة ناعمة</span>
+              <span class="tool-tag">علبة هواء مضغوط</span>
+              <span class="tool-tag">قفازات مطاطية</span>
+            </div>
+          </div>
+          <div class="step-nav">
+            <button class="step-nav-btn" onclick="prevStep()">→ السابق</button>
+            <button class="step-nav-btn primary" onclick="nextStep()">التالي ←</button>
+          </div>
+        </div>
+      </div>
+      <div class="chat-fab" id="chat-fab" onclick="toggleChat()">💬</div>
+      <div class="chat-overlay" id="chat-overlay">
+        <div class="chat-header"><span>المساعد الذكي</span><button class="chat-close" onclick="toggleChat()">✕</button></div>
+        <div class="chat-msgs" id="chat-msgs"><div class="msg bot">مرحباً! كيف يمكنني مساعدتك في هذه الخطوة؟</div></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chat-inp" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="chat-send" onclick="sendChat()">إرسال</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ADMIN REWARDS -->
-  <div id="aRewards" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-      <h1 class="text-xl font-black text-slate-900 flex items-center gap-2"><i class="ri-gift-2-line text-primary"></i> إدارة المكافآت</h1>
-      <button class="btn btn-primary btn-sm" onclick="document.getElementById('addRwModal').classList.add('active')"><i class="ri-add-line"></i> إضافة مكافأة</button>
-    </div>
-    <div class="card mb-5">
-      <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-gift-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">المكافآت الحالية</span></div>
-      <div class="table-wrap">
-        <table class="data-table mobile-cards">
-          <thead><tr><th>المكافأة</th><th>النقاط</th><th>الاستبدالات</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-          <tbody>
-            <tr>
-              <td data-label="المكافأة"><i class="ri-shield-check-line text-primary ml-1"></i> خصم التأمين</td>
-              <td data-label="النقاط" class="font-bold">500</td>
-              <td data-label="الاستبدالات">38 مرة</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td>
-            </tr>
-            <tr>
-              <td data-label="المكافأة"><i class="ri-sparkling-line text-sky-500 ml-1"></i> تنظيف السيارة</td>
-              <td data-label="النقاط" class="font-bold">200</td>
-              <td data-label="الاستبدالات">92 مرة</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td>
-            </tr>
-            <tr>
-              <td data-label="المكافأة"><i class="ri-tools-line text-amber-500 ml-1"></i> خدمات صيانة</td>
-              <td data-label="النقاط" class="font-bold">300</td>
-              <td data-label="الاستبدالات">54 مرة</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">نشطة</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td>
-            </tr>
-            <tr>
-              <td data-label="المكافأة"><i class="ri-gas-station-line text-success ml-1"></i> كرت وقود</td>
-              <td data-label="النقاط" class="font-bold">400</td>
-              <td data-label="الاستبدالات">21 مرة</td>
-              <td data-label="الحالة"><span class="badge bg-amber-100 text-amber-700">محدودة</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="toast('تم التعديل','success')"><i class="ri-edit-line"></i> تعديل</button></td>
-            </tr>
-          </tbody>
-        </table>
+  <div id="p-rewards" class="page">
+    <div class="page-header"><h2>النقاط والمكافآت</h2><p>تتبع أثرك البيئي واستبدل نقاطك</p></div>
+    <div class="rewards-layout">
+      <div class="points-hero">
+        <div class="points-left"><h2>محفظة نقاطك</h2><div class="big">1,240</div><p>+ 80 نقطة هذا الأسبوع</p></div>
+        <div class="tree-visual">🌳</div>
       </div>
-    </div>
-    <div class="card">
-      <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-history-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">سجل التحويلات</span></div>
-      <div class="table-wrap">
-        <table class="data-table mobile-cards">
-          <thead><tr><th>المستخدم</th><th>المكافأة</th><th>النقاط</th><th>التاريخ</th><th>الحالة</th></tr></thead>
-          <tbody>
-            <tr>
-              <td data-label="المستخدم">سارة أحمد</td>
-              <td data-label="المكافأة"><i class="ri-shield-check-line text-primary ml-1"></i>خصم التأمين</td>
-              <td data-label="النقاط" class="text-danger font-bold">−500</td>
-              <td data-label="التاريخ">22 فبراير</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td>
-            </tr>
-            <tr>
-              <td data-label="المستخدم">محمد علي</td>
-              <td data-label="المكافأة"><i class="ri-sparkling-line text-sky-500 ml-1"></i>تنظيف السيارة</td>
-              <td data-label="النقاط" class="text-danger font-bold">−200</td>
-              <td data-label="التاريخ">20 فبراير</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td>
-            </tr>
-            <tr>
-              <td data-label="المستخدم">أحمد محمد</td>
-              <td data-label="المكافأة"><i class="ri-tools-line text-amber-500 ml-1"></i>خدمات صيانة</td>
-              <td data-label="النقاط" class="text-danger font-bold">−300</td>
-              <td data-label="التاريخ">18 فبراير</td>
-              <td data-label="الحالة"><span class="badge bg-blue-100 text-blue-700">قيد التنفيذ</span></td>
-            </tr>
-            <tr>
-              <td data-label="المستخدم">فاطمة عمر</td>
-              <td data-label="المكافأة"><i class="ri-gas-station-line text-success ml-1"></i>كرت وقود</td>
-              <td data-label="النقاط" class="text-danger font-bold">−400</td>
-              <td data-label="التاريخ">15 فبراير</td>
-              <td data-label="الحالة"><span class="badge bg-emerald-100 text-emerald-700">مكتمل</span></td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="impact-grid">
+        <div class="impact-card"><div class="i-num">4.2 kg</div><div class="i-label">نفايات إلكترونية تم تجنبها</div></div>
+        <div class="impact-card"><div class="i-num">7</div><div class="i-label">إصلاح ناجح</div></div>
+        <div class="impact-card"><div class="i-num">12 kg</div><div class="i-label">CO₂ تم توفيره</div></div>
+      </div>
+      <div class="rewards-section">
+        <h3>المكافآت المتاحة</h3>
+        <div class="rewards-grid">
+          <div class="reward-card"><div class="reward-img">🛒</div><h4>خصم 20% في متجر قطع الغيار</h4><div class="pts">500 نقطة</div><p>صالح لمدة 30 يوماً</p><button class="redeem-btn">استبدل الآن</button></div>
+          <div class="reward-card"><div class="reward-img">🎓</div><h4>دورة تدريبية في الإصلاح</h4><div class="pts">800 نقطة</div><p>وصول لمدة شهر كامل</p><button class="redeem-btn">استبدل الآن</button></div>
+          <div class="reward-card"><div class="reward-img">🌱</div><h4>زرع شجرة بإسمك</h4><div class="pts">300 نقطة</div><p>شهادة إلكترونية بالأثر البيئي</p><button class="redeem-btn">استبدل الآن</button></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ADMIN REPORTS -->
-  <div id="aReports" class="max-w-screen-xl mx-auto px-4 md:px-8 py-8" style="display:none">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-      <h1 class="text-xl font-black text-slate-900 flex items-center gap-2"><i class="ri-file-chart-2-line text-primary"></i> تقارير النظام</h1>
-      <button class="btn btn-outline btn-sm" onclick="fakeDownload()"><i class="ri-download-cloud-line"></i> تصدير</button>
-    </div>
-    <div class="card mb-5">
-      <div class="flex items-center gap-2 mb-5"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-line-chart-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">إحصائيات سلوك القيادة</span></div>
-      <div style="height:280px"><canvas id="adminRepChart"></canvas></div>
-    </div>
-    <div class="grid-2">
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="ri-bar-chart-line text-primary text-sm"></i></div><span class="text-sm font-bold text-slate-700">ملخص الشهر</span></div>
-        <div class="info-row"><span class="info-label">متوسط نقاط القيادة</span><span class="info-value text-primary text-lg font-black">78.4</span></div>
-        <div class="info-row"><span class="info-label">إجمالي الرحلات</span><span class="info-value">4,280</span></div>
-        <div class="info-row"><span class="info-label">نقاط ممنوحة</span><span class="info-value text-success">+12,400</span></div>
-        <div class="info-row"><span class="info-label">نقاط مخصومة</span><span class="info-value text-danger">−2,180</span></div>
-        <div class="info-row"><span class="info-label">نسبة القيادة الآمنة</span><span class="info-value text-success text-lg font-black">84%</span></div>
+  <div id="p-community" class="page">
+    <div class="page-header"><h2>مجتمع الخبراء</h2><p>تواصل مع فنيين متطوعين وشارك قصص النجاح</p></div>
+    <div class="community-layout">
+      <h3 style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:12px;">خبراء متاحون الآن</h3>
+      <div class="comm-grid">
+        <div class="expert-card"><div class="avatar">أح</div><div class="expert-info"><h4>أحمد الحربي</h4><p>تقييم: ⭐ 4.9 · 120 إصلاح</p><div class="skills"><span class="skill-tag">لابتوب</span><span class="skill-tag">جوال</span></div><button class="contact-expert">تواصل الآن</button></div></div>
+        <div class="expert-card"><div class="avatar">سا</div><div class="expert-info"><h4>سارة العتيبي</h4><p>تقييم: ⭐ 4.8 · 85 إصلاح</p><div class="skills"><span class="skill-tag">أجهزة منزلية</span><span class="skill-tag">ثلاجة</span></div><button class="contact-expert">تواصل الآن</button></div></div>
+        <div class="expert-card"><div class="avatar">خا</div><div class="expert-info"><h4>خالد القحطاني</h4><p>تقييم: ⭐ 5.0 · 200 إصلاح</p><div class="skills"><span class="skill-tag">إلكترونيات</span><span class="skill-tag">تلفزيون</span></div><button class="contact-expert">تواصل الآن</button></div></div>
+        <div class="expert-card"><div class="avatar">نو</div><div class="expert-info"><h4>نورة السبيعي</h4><p>تقييم: ⭐ 4.7 · 60 إصلاح</p><div class="skills"><span class="skill-tag">غسالة</span><span class="skill-tag">مكيف</span></div><button class="contact-expert">تواصل الآن</button></div></div>
       </div>
-      <div class="card">
-        <div class="flex items-center gap-2 mb-4"><div class="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center"><i class="ri-alarm-warning-line text-danger text-sm"></i></div><span class="text-sm font-bold text-slate-700">التنبيهات والمخالفات</span></div>
-        <div class="info-row"><span class="info-label">تجاوز السرعة</span><span class="info-value"><span class="badge bg-red-100 text-red-700">128 مرة</span></span></div>
-        <div class="info-row"><span class="info-label">فرملة مفاجئة</span><span class="info-value"><span class="badge bg-amber-100 text-amber-700">89 مرة</span></span></div>
-        <div class="info-row"><span class="info-label">تسارع مفاجئ</span><span class="info-value"><span class="badge bg-amber-100 text-amber-700">64 مرة</span></span></div>
-        <div class="info-row"><span class="info-label">القيادة الليلية</span><span class="info-value"><span class="badge bg-blue-100 text-blue-700">42 مرة</span></span></div>
+      <div class="gallery-title">معرض النجاح — قبل وبعد</div>
+      <div class="gallery-grid">
+        <div class="gallery-item"><div class="before-after"><div class="ba-half">🖥️<div class="ba-label">قبل</div></div><div class="ba-half">✨<div class="ba-label">بعد</div></div></div><button class="share-btn">شاهد القصة</button></div>
+        <div class="gallery-item"><div class="before-after"><div class="ba-half">📱<div class="ba-label">قبل</div></div><div class="ba-half">✨<div class="ba-label">بعد</div></div></div><button class="share-btn">شاهد القصة</button></div>
+        <div class="gallery-item"><div class="before-after"><div class="ba-half">🔌<div class="ba-label">قبل</div></div><div class="ba-half">✨<div class="ba-label">بعد</div></div></div><button class="share-btn">شاهد القصة</button></div>
       </div>
-    </div>
-  </div>
-
-  <footer class="mt-16 py-6 text-center text-white">
-    <div class="max-w-screen-xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p class="text-sm opacity-80">© 2025 SmartDrive – لوحة تحكم المدير</p>
-      <div class="flex gap-6 text-sm opacity-70">
-        <span class="cursor-pointer hover:opacity-100 transition">الدعم الفني</span>
-        <span class="cursor-pointer hover:opacity-100 transition">الإعدادات</span>
-        <span class="cursor-pointer hover:opacity-100 transition">سجل النظام</span>
-      </div>
-    </div>
-  </footer>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toastEl"></div>
-
-<!-- ADD REWARD MODAL -->
-<div class="modal-overlay" id="addRwModal">
-  <div class="modal">
-    <div class="flex items-center gap-2 mb-6">
-      <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center"><i class="ri-add-circle-line text-primary text-lg"></i></div>
-      <h3 class="text-lg font-black text-slate-900">إضافة مكافأة جديدة</h3>
-    </div>
-    <div class="mb-3"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">اسم المكافأة</label><input class="form-input" placeholder="مثال: خصم الوقود"></div>
-    <div class="mb-3"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">النقاط المطلوبة</label><input class="form-input" type="number" placeholder="250"></div>
-    <div class="mb-5"><label class="block text-xs text-slate-500 mb-1.5 font-semibold">الوصف</label><input class="form-input" placeholder="وصف المكافأة"></div>
-    <div class="flex gap-3 justify-end">
-      <button class="btn btn-ghost" onclick="document.getElementById('addRwModal').classList.remove('active')">إلغاء</button>
-      <button class="btn btn-primary" onclick="addRewardAdmin()"><i class="ri-save-3-line"></i> إضافة</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── AUTH: أي شيء يدخله المستخدم يطلع صح ──
-let userPoints = 750;
-let repChartInited = false, adminRepChartInited = false;
-let currentUser = null;
-
-function doLogin() {
-  const u = document.getElementById('uInput').value.trim();
-  const p = document.getElementById('pInput').value;
-
-  // تحديد النوع بناءً على اسم المستخدم فقط
-  // إذا كتب "admin" يدخل كمدير، أي شيء ثاني يدخل كسائق
-  const isAdmin = u.toLowerCase() === 'admin';
-  const displayName = u || 'مستخدم';
-  const initials = displayName.charAt(0) || 'م';
-
-  if (isAdmin) {
-    currentUser = { role: 'admin', name: 'مدير النظام', initials: 'مد' };
-    showView('adminView');
-  } else {
-    currentUser = { role: 'user', name: displayName, initials: initials };
-    document.getElementById('uAvatar').textContent = initials;
-    document.getElementById('uNavName').textContent = displayName;
-    document.getElementById('sbUAvatar').textContent = initials;
-    document.getElementById('sbUName').textContent = displayName;
-    document.getElementById('uWelcomeName').textContent = displayName;
-    showView('userView');
-  }
-  setTimeout(initCharts, 120);
+const pages={landing:'p-landing',scan:'p-scan',guide:'p-guide',rewards:'p-rewards',community:'p-community'};
+const navIdx={landing:0,scan:1,guide:2,rewards:3,community:4};
+function goto(name){
+  Object.values(pages).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
+  const t=document.getElementById(pages[name]);if(t)t.classList.add('active');
+  const btns=document.querySelectorAll('.nav-btn');
+  btns.forEach((b,i)=>b.classList.toggle('active',i===navIdx[name]));
+  const fab=document.getElementById('chat-fab');
+  if(fab)fab.style.display=name==='guide'?'flex':'none';
+  if(name==='landing')animateCounters();
 }
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('loginView').classList.contains('active')) doLogin();
-});
-function logout() { showView('loginView'); }
-function showView(id) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// SIDEBAR
-function openSb(prefix) {
-  document.getElementById(prefix + 'Sidebar').classList.add('open');
-  document.getElementById(prefix + 'SidebarOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeSb(prefix) {
-  document.getElementById(prefix + 'Sidebar').classList.remove('open');
-  document.getElementById(prefix + 'SidebarOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function sbUserGo(tabId, idx) {
-  for (let i = 0; i < 4; i++) document.getElementById('usb-' + i).classList.remove('active');
-  document.getElementById('usb-' + idx).classList.add('active');
-  const dBtns = document.querySelectorAll('#userNavLinks .nav-link');
-  dBtns.forEach(b => b.classList.remove('active'));
-  if (dBtns[idx]) dBtns[idx].classList.add('active');
-  showUserTab(tabId, null);
-  closeSb('u');
-  window.scrollTo(0, 0);
-}
-
-function sbAdminGo(tabId, idx) {
-  for (let i = 0; i < 4; i++) document.getElementById('asb-' + i).classList.remove('active');
-  document.getElementById('asb-' + idx).classList.add('active');
-  const dBtns = document.querySelectorAll('#adminNavLinks .nav-link');
-  dBtns.forEach(b => b.classList.remove('active'));
-  if (dBtns[idx]) dBtns[idx].classList.add('active');
-  showAdminTab(tabId, null);
-  closeSb('a');
-  window.scrollTo(0, 0);
-}
-
-// TABS
-function showUserTab(id, btn) {
-  ['uDash','uReports','uRewards','uProfile'].forEach(t => {
-    document.getElementById(t).style.display = 'none';
-  });
-  document.getElementById(id).style.display = 'block';
-  document.querySelectorAll('#userNavLinks .nav-link').forEach(l => l.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  if (id === 'uReports' && !repChartInited) { repChartInited = true; setTimeout(initRepChart, 60); }
-}
-function showAdminTab(id, btn) {
-  ['aDash','aUsers','aRewards','aReports'].forEach(t => {
-    document.getElementById(t).style.display = 'none';
-  });
-  document.getElementById(id).style.display = 'block';
-  document.querySelectorAll('#adminNavLinks .nav-link').forEach(l => l.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  if (id === 'aReports' && !adminRepChartInited) { adminRepChartInited = true; setTimeout(initAdminRepChart, 60); }
-}
-
-// REWARDS
-function redeem(btn, cost, name) {
-  if (userPoints < cost) { toast('رصيدك غير كافٍ (' + userPoints + ' نقطة)', 'error'); return; }
-  if (!confirm('استبدال "' + name + '" مقابل ' + cost + ' نقطة؟')) return;
-  userPoints -= cost;
-  document.getElementById('totalPts').textContent = userPoints.toLocaleString();
-  document.getElementById('ptsBal').textContent = userPoints.toLocaleString();
-  toast('تم استبدال "' + name + '" بنجاح!', 'success');
-  document.querySelectorAll('.reward-card .btn').forEach(b => {
-    const match = b.getAttribute('onclick').match(/\d+/);
-    if (match) {
-      const c = parseInt(match[0]);
-      b.disabled = userPoints < c;
-      b.style.opacity = userPoints < c ? '0.45' : '1';
-    }
+function animateCounters(){
+  [{id:'counter1',end:18420},{id:'counter2',end:9340},{id:'counter3',end:4280}].forEach(t=>{
+    let v=0;const el=document.getElementById(t.id);const step=Math.ceil(t.end/60);
+    const iv=setInterval(()=>{v=Math.min(v+step,t.end);el.textContent=v.toLocaleString('ar');if(v>=t.end)clearInterval(iv);},20);
   });
 }
-
-// TOAST
-function toast(msg, type) {
-  type = type || '';
-  const el = document.getElementById('toastEl');
-  const icon = type === 'success' ? '<i class="ri-checkbox-circle-fill"></i> ' : type === 'error' ? '<i class="ri-close-circle-fill"></i> ' : '<i class="ri-information-line"></i> ';
-  el.innerHTML = icon + msg;
-  el.className = 'toast' + (type ? ' ' + type : '');
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
+function showUploadResult(){
+  document.getElementById('repair-bar-fill').style.width='80%';
+  document.getElementById('repair-pct').textContent='80%';
+  setTimeout(()=>{document.getElementById('twin-result').style.display='block';},1000);
 }
-
-function fakeDownload() {
-  toast('جاري تحضير التقرير...', '');
-  setTimeout(() => toast('تم التحميل بنجاح', 'success'), 2000);
+function selectDevice(el,icon){
+  document.querySelectorAll('.d-item').forEach(d=>{d.style.background='';d.style.borderColor='';});
+  el.style.background='var(--teal-light)';el.style.borderColor='var(--teal)';
+  const p=document.querySelector('.twin-pulse');if(p)p.textContent=icon;
 }
-function addRewardAdmin() {
-  document.getElementById('addRwModal').classList.remove('active');
-  toast('تم إضافة المكافأة بنجاح', 'success');
-}
-
-// CHARTS
-const months = ['سبتمبر','أكتوبر','نوفمبر','ديسمبر','يناير','فبراير'];
-
-function initCharts() {
-  const ctx1 = document.getElementById('dashChart').getContext('2d');
-  new Chart(ctx1, {
-    type: 'line',
-    data: {
-      labels: months,
-      datasets: [
-        { label: 'السرعة', data: [72,68,80,75,70,78], borderColor: '#1a56db', backgroundColor: 'rgba(26,86,219,0.07)', tension: 0.4, fill: true, pointBackgroundColor: '#1a56db', pointRadius: 4 },
-        { label: 'التسارع', data: [65,70,62,68,72,74], borderColor: '#059669', backgroundColor: 'rgba(5,150,105,0.07)', tension: 0.4, fill: true, pointBackgroundColor: '#059669', pointRadius: 4 },
-        { label: 'الفرملة', data: [80,75,85,78,82,87], borderColor: '#d97706', backgroundColor: 'rgba(217,119,6,0.06)', tension: 0.4, fill: true, pointBackgroundColor: '#d97706', pointRadius: 4 }
-      ]
-    },
-    options: chartOpts(50, 100)
-  });
-  const ctx2 = document.getElementById('adminDashChart').getContext('2d');
-  new Chart(ctx2, {
-    type: 'bar',
-    data: {
-      labels: months,
-      datasets: [
-        { label: 'مستخدمون نشطون', data: [110,118,124,130,136,142], backgroundColor: 'rgba(26,86,219,0.72)', borderRadius: 6 },
-        { label: 'رحلات (متوسط يومي)', data: [180,210,240,260,270,284], backgroundColor: 'rgba(5,150,105,0.65)', borderRadius: 6 }
-      ]
-    },
-    options: chartOpts()
+const steps=[
+  {icon:'🧰',title:'تجهيز المكان والأدوات',desc:'أطفئ اللابتوب تماماً وافصله من الكهرباء. اختر سطحاً مستوياً ومضاءً. تأكد من وجود كافة الأدوات اللازمة أمامك قبل البدء.',tools:['مفك Philips #0','فرشاة ناعمة','علبة هواء مضغوط','قفازات مطاطية']},
+  {icon:'🪛',title:'فتح الغطاء الخلفي',desc:'استخدم مفك Philips لإزالة براغي الغطاء الخلفي. ضعها في مكان آمن. أدخل أداة بلاستيكية برفق على الحواف لفك الأقفال.',tools:['مفك Philips #0','أداة فتح بلاستيكية']},
+  {icon:'💨',title:'تنظيف المروحة والمشعاع',desc:'استخدم الهواء المضغوط لنفخ الغبار من المروحة. فرّغ مجرى الهواء والمشعاع. استخدم الفرشاة الناعمة لتنظيف الشفرات بلطف.',tools:['علبة هواء مضغوط','فرشاة ناعمة']},
+  {icon:'✅',title:'التحقق من عمل المروحة',desc:'أعد توصيل اللابتوب مؤقتاً بدون غلق الغطاء. شغّل الجهاز وراقب المروحة. يجب أن تعمل بسلاسة بدون أصوات غريبة.',tools:[]},
+  {icon:'🔒',title:'إغلاق الجهاز بالبراغي',desc:'أعد وضع الغطاء الخلفي وتأكد من محاذاة الأقفال. أعد تثبيت البراغي بنفس الترتيب. لا تشدّ البراغي بقوة زائدة.',tools:['مفك Philips #0']},
+];
+let cs=0;
+function setStep(i){
+  cs=i;const s=steps[i];
+  document.getElementById('step-visual').textContent=s.icon;
+  document.getElementById('step-title').textContent=s.title;
+  document.getElementById('step-desc').textContent=s.desc;
+  const tl=document.getElementById('tools-list');
+  tl.innerHTML=s.tools.length?s.tools.map(t=>`<span class="tool-tag">${t}</span>`).join(''):'<span style="font-size:13px;color:var(--text-sec)">لا أدوات مطلوبة</span>';
+  document.querySelectorAll('.step-item').forEach((it,idx)=>{
+    it.classList.toggle('active-step',idx===i);
+    const sn=it.querySelector('.step-num');
+    sn.style.background=idx===i?'var(--teal)':'#D3D1C7';
+    sn.style.color=idx===i?'white':'var(--text-sec)';
   });
 }
-function initRepChart() {
-  const ctx = document.getElementById('repChart').getContext('2d');
-  const days = ['1 فبراير','4 فبراير','7 فبراير','10 فبراير','13 فبراير','16 فبراير','19 فبراير','22 فبراير','24 فبراير'];
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: days,
-      datasets: [
-        { label: 'نقاط إيجابية', data: [12,8,15,10,18,9,14,16,13], backgroundColor: 'rgba(5,150,105,0.72)', borderRadius: 5 },
-        { label: 'نقاط سلبية', data: [-3,-5,-2,-7,-1,-4,-2,-5,-2], backgroundColor: 'rgba(220,38,38,0.6)', borderRadius: 5 }
-      ]
-    },
-    options: chartOpts()
-  });
+function nextStep(){if(cs<steps.length-1)setStep(cs+1);}
+function prevStep(){if(cs>0)setStep(cs-1);}
+let chatOpen=false;
+function toggleChat(){chatOpen=!chatOpen;document.getElementById('chat-overlay').classList.toggle('open',chatOpen);}
+const bots=['بالتأكيد! تأكد من فصل الكهرباء أولاً.','هذا طبيعي، استمر بلطف.','إذا واجهت صعوبة، تواصل مع أحد الخبراء.','ممتاز! أنت تسير بشكل صحيح.'];
+function sendChat(){
+  const inp=document.getElementById('chat-inp');const msgs=document.getElementById('chat-msgs');
+  const text=inp.value.trim();if(!text)return;
+  msgs.innerHTML+=`<div class="msg user">${text}</div>`;inp.value='';
+  setTimeout(()=>{msgs.innerHTML+=`<div class="msg bot">${bots[Math.floor(Math.random()*bots.length)]}</div>`;msgs.scrollTop=msgs.scrollHeight;},600);
+  msgs.scrollTop=msgs.scrollHeight;
 }
-function initAdminRepChart() {
-  const ctx = document.getElementById('adminRepChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['أسبوع 1','أسبوع 2','أسبوع 3','أسبوع 4'],
-      datasets: [
-        { label: 'متوسط نقاط القيادة', data: [74,78,76,82], borderColor: '#1a56db', backgroundColor: 'rgba(26,86,219,0.08)', tension: 0.4, fill: true, pointRadius: 5, pointBackgroundColor: '#1a56db' },
-        { label: 'نسبة القيادة الآمنة %', data: [80,83,81,88], borderColor: '#059669', backgroundColor: 'rgba(5,150,105,0.06)', tension: 0.4, fill: true, pointRadius: 5, pointBackgroundColor: '#059669' }
-      ]
-    },
-    options: chartOpts(60, 100)
-  });
-}
-function chartOpts(min, max) {
-  const y = min !== undefined ? { min, max, grid: { color: '#f1f5f9' }, ticks: { font: { family: 'Cairo', size: 11 } } }
-                              : { grid: { color: '#f1f5f9' }, ticks: { font: { family: 'Cairo', size: 11 } } };
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { position: 'top', labels: { font: { family: 'Cairo', size: 12 }, boxWidth: 12, padding: 16 } } },
-    scales: {
-      x: { grid: { display: false }, ticks: { font: { family: 'Cairo', size: 11 } } },
-      y
-    }
-  };
-}
+animateCounters();
 </script>
-</body>
-</html>
