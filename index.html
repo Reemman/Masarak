@@ -1,384 +1,543 @@
-
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVTC Smart Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
---teal:#1D9E75;--teal-light:#E1F5EE;--teal-dark:#085041;
---coral:#D85A30;--coral-light:#FAECE7;
---amber:#BA7517;--amber-light:#FAEEDA;
---purple:#534AB7;--purple-light:#EEEDFE;
---green:#639922;--green-light:#EAF3DE;
---gray-bg:#F1EFE8;
---text:#2C2C2A;--text-sec:#5F5E5A;
---border:#B4B2A9;
-}
-.page{display:none;flex-direction:column;min-height:600px;background:#fafaf9;}
-.page.active{display:flex;}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1.5px solid #B4B2A9;background:#085041;}
-.logo{font-size:16px;font-weight:500;color:white;display:flex;align-items:center;gap:8px;}
-.logo-dot{width:10px;height:10px;background:#5DCAA5;border-radius:50%;}
-.nav-links{display:flex;gap:4px;}
-.nav-btn{font-size:13px;padding:6px 12px;border:none;background:transparent;color:rgba(255,255,255,0.75);cursor:pointer;border-radius:8px;}
-.nav-btn:hover{background:rgba(255,255,255,0.12);color:white;}
-.nav-btn.active{background:rgba(255,255,255,0.18);color:white;font-weight:500;}
-.nav-cta{font-size:13px;padding:7px 16px;border:none;background:#5DCAA5;color:#085041;cursor:pointer;border-radius:8px;font-weight:500;}
-.nav-cta:hover{background:#9FE1CB;}
-
-.hero{padding:64px 40px 48px;text-align:center;background:white;border-bottom:1.5px solid #B4B2A9;}
-.badge{display:inline-block;font-size:12px;padding:5px 14px;background:var(--teal-light);color:var(--teal-dark);border-radius:20px;margin-bottom:20px;border:1px solid #9FE1CB;}
-.hero h1{font-size:34px;font-weight:500;line-height:1.25;color:var(--text);margin-bottom:12px;}
-.hero h1 span{color:var(--teal);}
-.hero p{font-size:16px;color:var(--text-sec);margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto;}
-.cta-btn{font-size:15px;padding:14px 32px;background:var(--teal);color:white;border:none;border-radius:12px;cursor:pointer;font-weight:500;}
-.cta-btn:hover{background:var(--teal-dark);}
-.cta-sub{font-size:13px;color:var(--text-sec);margin-top:12px;}
-
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:24px 40px;}
-.stat-card{background:white;border-radius:12px;padding:20px;text-align:center;border:1.5px solid #B4B2A9;}
-.stat-num{font-size:28px;font-weight:500;color:var(--teal-dark);}
-.stat-label{font-size:13px;color:var(--text-sec);margin-top:4px;}
-
-.features{padding:0 40px 48px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-.feature-card{background:white;border:1.5px solid #B4B2A9;border-radius:12px;padding:20px;cursor:pointer;transition:border-color 0.2s;}
-.feature-card:hover{border-color:var(--teal);}
-.feature-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
-.feature-card h3{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;}
-.feature-card p{font-size:13px;color:var(--text-sec);}
-
-.page-header{padding:32px 40px 20px;border-bottom:1.5px solid #B4B2A9;background:white;}
-.page-header h2{font-size:22px;font-weight:500;color:var(--text);}
-.page-header p{font-size:14px;color:var(--text-sec);margin-top:4px;}
-
-.scan-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:24px 40px;}
-.upload-zone{border:2px dashed #888780;border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;background:white;}
-.upload-zone:hover{border-color:var(--teal);background:var(--teal-light);}
-.upload-icon{width:48px;height:48px;background:var(--teal-light);border:1.5px solid #9FE1CB;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px;}
-.upload-zone h3{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px;}
-.upload-zone p{font-size:13px;color:var(--text-sec);}
-.upload-btn{margin-top:16px;font-size:13px;padding:8px 18px;background:var(--teal);color:white;border:none;border-radius:8px;cursor:pointer;}
-.desc-panel{border:1.5px solid #B4B2A9;border-radius:8px;padding:12px;background:white;margin-top:12px;}
-
-.twin-panel{background:var(--teal-dark);border-radius:12px;padding:20px;color:white;border:1.5px solid #085041;}
-.twin-title{font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:12px;}
-.twin-viz{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-.twin-pulse{width:60px;height:60px;border-radius:50%;background:rgba(29,158,117,0.5);display:flex;align-items:center;justify-content:center;font-size:28px;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
-.twin-dot{position:absolute;width:8px;height:8px;background:#5DCAA5;border-radius:50%;}
-.repair-bar{margin-top:16px;}
-.repair-label{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:6px;}
-.bar-track{background:rgba(255,255,255,0.2);border-radius:4px;height:8px;}
-.bar-fill{background:#5DCAA5;border-radius:4px;height:8px;width:0;transition:width 1s;}
-
-.quick-diagnose{padding:0 40px 32px;}
-.quick-diagnose h3{font-size:16px;font-weight:500;color:var(--text);margin-bottom:12px;}
-.diagnose-items{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.d-item{border:1.5px solid #B4B2A9;border-radius:8px;padding:12px;cursor:pointer;text-align:center;font-size:13px;color:var(--text);background:white;}
-.d-item:hover{background:var(--teal-light);border-color:var(--teal);}
-.d-item span{display:block;font-size:20px;margin-bottom:6px;}
-
-.guide-layout{display:grid;grid-template-columns:220px 1fr;gap:0;flex:1;}
-.guide-sidebar{border-right:1.5px solid #B4B2A9;padding:24px 16px;background:white;}
-.step-list{list-style:none;}
-.step-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;font-size:13px;color:var(--text-sec);}
-.step-item:hover{background:var(--teal-light);}
-.step-item.active-step{background:var(--teal-light);color:var(--teal-dark);font-weight:500;}
-.step-num{width:24px;height:24px;border-radius:50%;background:#D3D1C7;color:var(--text-sec);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.step-item.active-step .step-num{background:var(--teal);color:white;}
-.guide-content{padding:32px;background:#fafaf9;}
-.step-visual{background:var(--teal-light);border:1.5px solid #9FE1CB;border-radius:12px;height:180px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:20px;}
-.guide-content h3{font-size:18px;font-weight:500;color:var(--text);margin-bottom:8px;}
-.guide-content p{font-size:14px;color:var(--text-sec);line-height:1.7;}
-.tools-needed{margin-top:20px;padding:16px;background:white;border:1.5px solid #B4B2A9;border-radius:8px;}
-.tools-needed h4{font-size:13px;font-weight:500;color:var(--amber);margin-bottom:8px;}
-.tools-list{display:flex;gap:8px;flex-wrap:wrap;}
-.tool-tag{font-size:12px;padding:4px 10px;background:var(--gray-bg);border:1px solid #B4B2A9;border-radius:20px;color:var(--text);}
-.step-nav{display:flex;gap:8px;margin-top:24px;}
-.step-nav-btn{font-size:13px;padding:9px 20px;border:1.5px solid #B4B2A9;background:white;border-radius:8px;cursor:pointer;color:var(--text);}
-.step-nav-btn.primary{background:var(--teal);color:white;border-color:var(--teal);}
-.guide-wrapper{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column;}
-
-.rewards-layout{padding:32px 40px;background:#fafaf9;}
-.points-hero{background:var(--teal-dark);border:1.5px solid #085041;border-radius:12px;padding:28px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.points-left h2{font-size:13px;color:rgba(255,255,255,0.7);}
-.points-left .big{font-size:40px;font-weight:500;color:white;margin:4px 0;}
-.points-left p{font-size:13px;color:rgba(255,255,255,0.6);}
-.tree-visual{font-size:60px;}
-.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
-.impact-card{background:white;border:1.5px solid #B4B2A9;border-radius:8px;padding:16px;text-align:center;}
-.impact-card .i-num{font-size:22px;font-weight:500;color:var(--teal-dark);}
-.impact-card .i-label{font-size:12px;color:var(--text-sec);margin-top:4px;}
-.rewards-section h3{font-size:16px;font-weight:500;color:var(--text);margin-bottom:12px;}
-.rewards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.reward-card{border:1.5px solid #B4B2A9;border-radius:12px;padding:16px;cursor:pointer;background:white;}
-.reward-card:hover{border-color:var(--teal);}
-.reward-img{font-size:32px;margin-bottom:8px;}
-.reward-card h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
-.reward-card .pts{font-size:12px;color:var(--teal);font-weight:500;}
-.reward-card p{font-size:12px;color:var(--text-sec);margin-top:4px;}
-.redeem-btn{margin-top:10px;font-size:12px;padding:6px 14px;background:var(--teal-light);color:var(--teal-dark);border:1px solid #9FE1CB;border-radius:8px;cursor:pointer;width:100%;}
-
-.community-layout{padding:32px 40px;background:#fafaf9;}
-.comm-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
-.expert-card{border:1.5px solid #B4B2A9;border-radius:12px;padding:16px;display:flex;gap:12px;background:white;}
-.avatar{width:44px;height:44px;border-radius:50%;background:var(--teal-light);border:1.5px solid #9FE1CB;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--teal-dark);flex-shrink:0;}
-.expert-info h4{font-size:14px;font-weight:500;color:var(--text);}
-.expert-info p{font-size:12px;color:var(--text-sec);margin-top:2px;}
-.expert-info .skills{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;}
-.skill-tag{font-size:11px;padding:3px 8px;background:var(--teal-light);color:var(--teal-dark);border:1px solid #9FE1CB;border-radius:20px;}
-.contact-expert{margin-top:10px;font-size:12px;padding:7px 14px;background:var(--teal);color:white;border:none;border-radius:8px;cursor:pointer;}
-.gallery-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:12px;}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.gallery-item{border-radius:8px;overflow:hidden;border:1.5px solid #B4B2A9;background:white;}
-.before-after{display:grid;grid-template-columns:1fr 1fr;}
-.ba-half{padding:10px;text-align:center;font-size:24px;}
-.ba-half:first-child{background:#fef2f2;}
-.ba-half:last-child{background:#f0fdf4;}
-.ba-label{font-size:11px;color:var(--text-sec);margin-top:4px;}
-.share-btn{display:block;width:100%;font-size:12px;padding:8px;background:var(--gray-bg);color:var(--text);border:none;border-top:1px solid #B4B2A9;cursor:pointer;}
-
-.chat-overlay{display:none;position:absolute;bottom:24px;right:24px;width:280px;background:white;border:1.5px solid #B4B2A9;border-radius:12px;z-index:100;}
-.chat-overlay.open{display:block;}
-.chat-header{padding:14px 16px;background:var(--teal);color:white;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center;}
-.chat-header span{font-size:14px;font-weight:500;}
-.chat-close{background:none;border:none;color:white;cursor:pointer;font-size:18px;}
-.chat-msgs{padding:12px;height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
-.msg{font-size:13px;padding:8px 12px;border-radius:8px;max-width:90%;}
-.msg.bot{background:var(--teal-light);color:var(--teal-dark);border:1px solid #9FE1CB;}
-.msg.user{background:var(--teal);color:white;align-self:flex-end;}
-.chat-input-row{display:flex;gap:6px;padding:10px 12px;border-top:1px solid #B4B2A9;}
-.chat-input{flex:1;font-size:13px;padding:7px 10px;border:1.5px solid #B4B2A9;border-radius:8px;color:var(--text);}
-.chat-send{background:var(--teal);color:white;border:none;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px;}
-.chat-fab{position:absolute;bottom:24px;right:24px;background:var(--teal);color:white;width:52px;height:52px;border-radius:50%;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:22px;border:2px solid var(--teal-dark);}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Tajawal',Arial,sans-serif; }
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-thumb { background:rgba(43,191,179,.3); border-radius:4px; }
+@keyframes b0 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes b1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes b2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+const LOGO = "data:image/png;base64,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";
 
-<div id="app">
-  <nav class="nav">
-    <div class="logo"><div class="logo-dot"></div> أَحيِها</div>
-    <div class="nav-links">
-      <button class="nav-btn active" onclick="goto('landing')">الرئيسية</button>
-      <button class="nav-btn" onclick="goto('scan')">الفحص</button>
-      <button class="nav-btn" onclick="goto('guide')">دليل الإصلاح</button>
-      <button class="nav-btn" onclick="goto('rewards')">النقاط</button>
-      <button class="nav-btn" onclick="goto('community')">المجتمع</button>
-    </div>
-    <button class="nav-cta" onclick="goto('scan')">ابدأ الفحص</button>
-  </nav>
+const TIPS=["Ctrl+Z للتراجع عن أي خطأ","Windows+D يُظهر سطح المكتب","Ctrl+C نسخ | Ctrl+V لصق | Ctrl+S حفظ","Alt+Tab للتنقل بين النوافذ","كلمة المرور القوية: أحرف+أرقام+رموز","لا تفتح روابط مشبوهة","SSD أسرع بكثير من HDD","حدّث نظامك لإصلاح الثغرات"];
+const QUIZ=[{q:"ما هو نظام التشغيل الأكثر استخداماً؟",opts:["Windows","Linux","macOS","Android"],c:0},{q:"ما وظيفة ذاكرة RAM؟",opts:["تخزين دائم","معالجة مؤقتة","عرض الصور","الإنترنت"],c:1},{q:"اختصار النسخ في Windows؟",opts:["Ctrl+X","Ctrl+V","Ctrl+C","Ctrl+Z"],c:2},{q:"ما بروتوكول البيانات المشفرة؟",opts:["HTTP","FTP","HTTPS","SMTP"],c:2},{q:"ماذا تعني CPU؟",opts:["وحدة المعالجة المركزية","ذاكرة التخزين","بطاقة الرسوميات","مصدر الطاقة"],c:0}];
+const LESSONS={basics:{title:"أساسيات الحاسب",icon:"💻",color:"#2BBFB3",steps:[{t:"Hardware vs Software",c:"Hardware الأجزاء المادية. Software البرامج.",a:"✅ فهمت الفرق"},{t:"المعالج CPU",c:"عقل الحاسب — يُقاس بالغيغاهرتز GHz.",a:"🔧 تحقق من مواصفات جهازك"},{t:"ذاكرة RAM",c:"ذاكرة مؤقتة. 8GB عادي، 16GB+ للألعاب.",a:"💡 فهمت RAM"},{t:"HDD vs SSD",c:"SSD أسرع — يُقلل وقت التشغيل من دقائق لثوانٍ!",a:"✅ أعرف الفرق"}]},internet:{title:"الإنترنت والشبكات",icon:"🌐",color:"#7BC67A",steps:[{t:"ما هو الإنترنت؟",c:"شبكة عالمية تربط مليارات الأجهزة.",a:"✅ فهمت الإنترنت"},{t:"عنوان IP",c:"رقم تعريفي فريد لجهازك على الإنترنت.",a:"🔍 ابحث What is my IP"},{t:"WiFi",c:"تنقل البيانات بموجات الراديو. 5GHz أسرع.",a:"📶 فهمت WiFi"},{t:"HTTPS والأمان",c:"🔒 في المتصفح = موقع آمن.",a:"✅ سأتحقق دائماً"}]},files:{title:"إدارة الملفات",icon:"📁",color:"#8B5CF6",steps:[{t:"نظام المجلدات",c:"الملفات تُنظَّم في مجلدات مثل خزانة حقيقية.",a:"✅ سأنظم ملفاتي"},{t:"امتدادات الملفات",c:".pdf مستند .jpg صورة .docx وورد .mp4 فيديو",a:"🔍 لاحظها"},{t:"نسخ ونقل",c:"نسخ: Ctrl+C ثم Ctrl+V. نقل: Ctrl+X ثم Ctrl+V.",a:"🎯 جرّب الآن"},{t:"سلة المحذوفات",c:"المحذوفات تذهب للسلة أولاً.",a:"✅ فهمت السلة"}]},shortcuts:{title:"اختصارات لوحة المفاتيح",icon:"⌨️",color:"#F59E0B",steps:[{t:"الأساسيات",c:"Ctrl+C نسخ | Ctrl+V لصق | Ctrl+Z تراجع | Ctrl+S حفظ",a:"🎯 جرّب الآن"},{t:"Windows",c:"Win+D سطح المكتب | Win+L قفل | Alt+Tab تنقل",a:"✅ سأستخدمها يومياً"},{t:"المتصفح",c:"Ctrl+T تبويب | Ctrl+W إغلاق | Ctrl+F بحث",a:"🌐 جرّب الآن"},{t:"مفاتيح F",c:"F1 مساعدة | F5 تحديث | F11 ملء الشاشة",a:"✅ أعرف وظائف F"}]},security:{title:"الأمان الرقمي",icon:"🔒",color:"#EF4444",steps:[{t:"كلمة المرور القوية",c:"أحرف كبيرة+صغيرة+أرقام+رموز+12 خانة.",a:"🔐 سأغير كلمات مروري"},{t:"التصيد الإلكتروني",c:"روابط مزيفة لسرقة بياناتك.",a:"⚠️ فهمت خطر التصيد"},{t:"المصادقة الثنائية",c:"رمز يُرسَل لهاتفك — حماية إضافية.",a:"✅ سأفعّل 2FA"},{t:"التحديثات",c:"التحديثات تُصلح ثغرات يستغلها الهاكرز.",a:"🔄 سأحدّث نظامي"}]}};
+const KB=[{k:["ram","رام"],r:"🧠 RAM ذاكرة مؤقتة. 8GB عادي، 16GB+ ألعاب."},{k:["cpu","معالج"],r:"⚡ CPU وحدة المعالجة المركزية — عقل الحاسب."},{k:["ssd"],r:"💾 SSD تخزين سريع — يُقلل وقت التشغيل!"},{k:["cloud","سحاب","سحابة"],r:"☁️ السحابة تخزن بياناتك على الإنترنت. Google Drive مثال."},{k:["حمي","امان","أمان","فيروس"],r:"🔒 حماية: كلمات مرور قوية + 2FA + لا تفتح روابط مشبوهة."},{k:["انترنت","إنترنت"],r:"🌐 الإنترنت شبكة عالمية عبر كابلات بحرية وأقمار."},{k:["wifi"],r:"📶 WiFi لاسلكي. 5GHz أسرع."},{k:["tvtc","المؤسسة","تدريب"],r:"🏢 المؤسسة العامة للتدريب التقني والمهني في المملكة."}];
+const FB=["سؤال ممتاز! 🌟 تفقد قسم الدروس.","أحسنت! 👏 ستجده في مساري التعليمي.","سؤال ذكي! 🧠 الفضول أول خطوات التعلم!"];
+const MATCH=[{term:"CPU",def:"وحدة المعالجة"},{term:"RAM",def:"ذاكرة مؤقتة"},{term:"SSD",def:"تخزين سريع"},{term:"WiFi",def:"إنترنت لاسلكي"}];
+const SPEED=[{q:"اختصار النسخ؟",a:"Ctrl+C"},{q:"اختصار الحفظ؟",a:"Ctrl+S"},{q:"عقل الحاسب؟",a:"CPU"},{q:"ذاكرة مؤقتة؟",a:"RAM"},{q:"البروتوكول الآمن؟",a:"HTTPS"},{q:"تخزين سريع؟",a:"SSD"},{q:"اختصار التراجع؟",a:"Ctrl+Z"},{q:"إنترنت لاسلكي؟",a:"WiFi"}];
+const FILL=[{q:"اضغط ___ للتراجع",opts:["Ctrl+Z","Ctrl+C","Ctrl+V","Ctrl+S"],c:0},{q:"الـ ___ عقل الحاسب",opts:["RAM","CPU","SSD","GPU"],c:1},{q:"عنوان الجهاز على الإنترنت ___",opts:["URL","HTML","IP","DNS"],c:2},{q:"___ أسرع من HDD",opts:["USB","DVD","SSD","CD"],c:2},{q:"Ctrl+T يفتح ___",opts:["نافذة","تبويب","ملف","برنامج"],c:1}];
+const WORDS=[{word:"CPU",clue:"عقل الحاسب الذي ينفذ العمليات"},{word:"RAM",clue:"ذاكرة مؤقتة تُفقد عند إيقاف الجهاز"},{word:"SSD",clue:"تخزين أسرع من HDD"},{word:"WIFI",clue:"إنترنت لاسلكي بموجات الراديو"},{word:"USB",clue:"منفذ لتوصيل الأجهزة الخارجية"}];
+const NAVITEMS=[{id:"home",ic:"🏠",lb:"الرئيسية"},{id:"quiz",ic:"🎯",lb:"اختبار"},{id:"lessons",ic:"📚",lb:"دروس"},{id:"games",ic:"🎮",lb:"ألعاب"},{id:"chat",ic:"💬",lb:"ذكاء"},{id:"report",ic:"📊",lb:"تقرير"}];
 
-  <div id="p-landing" class="page active">
-    <div class="hero">
-      <div class="badge">منصة الاستدامة الذكية</div>
-      <h1>لا ترمِها،<br>نحن نساعدك على <span>إحيائها</span></h1>
-      <p>باستخدام التوأم الرقمي والذكاء الاصطناعي، نشخّص عطل أي جهاز ونرشدك لإصلاحه خطوة بخطوة.</p>
-      <button class="cta-btn" onclick="goto('scan')">ابدأ الفحص الآن</button>
-     
-    </div>
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num" id="counter1">0</div><div class="stat-label">كيلوغرام نفايات تم تجنبها</div></div>
-      <div class="stat-card"><div class="stat-num" id="counter2">0</div><div class="stat-label">إصلاح ناجح حتى الآن</div></div>
-      <div class="stat-card"><div class="stat-num" id="counter3">0</div><div class="stat-label">مستخدم نشط</div></div>
-    </div>
-    <div class="features">
-      <div class="feature-card" onclick="goto('scan')"><div class="feature-icon" style="background:var(--teal-light);border:1px solid #9FE1CB;">🔍</div><h3>فحص ذكي بالصورة</h3><p>ارفع صورة الجهاز التالف وسنحدد مكان العطل تلقائياً</p></div>
-      <div class="feature-card" onclick="goto('guide')"><div class="feature-icon" style="background:var(--amber-light);border:1px solid #FAC775;">📋</div><h3>دليل إصلاح تفاعلي</h3><p>خطوات مصورة مع مساعد ذكي جاهز للإجابة على أي سؤال</p></div>
-      <div class="feature-card" onclick="goto('rewards')"><div class="feature-icon" style="background:var(--green-light);border:1px solid #C0DD97;">🌱</div><h3>نقاط واستدامة</h3><p>اكسب نقاطاً مع كل إصلاح واستبدلها بمكافآت حقيقية</p></div>
-      <div class="feature-card" onclick="goto('community')"><div class="feature-icon" style="background:var(--purple-light);border:1px solid #CECBF6;">👥</div><h3>مجتمع الخبراء</h3><p>تواصل مع فنيين متطوعين وشارك قصة إصلاحك</p></div>
-    </div>
-  </div>
+function App() {
+  const [pg,setPg]=useState("login");
+  const [name,setName]=useState("");
+  const [uid,setUid]=useState("");
+  const [pw,setPw]=useState("");
+  const [er,setEr]=useState("");
+  const [dk,setDk]=useState(false);
+  const [xp,setXp]=useState(150);
+  const [ti,setTi]=useState(0);
+  const [ls,setLs]=useState(null);
+  const [pr,setPr]=useState({});
+  const [qi,setQi]=useState(0);
+  const [qs,setQs]=useState(0);
+  const [qsel,setQsel]=useState(null);
+  const [res,setRes]=useState(null);
+  const [tst,setTst]=useState(null);
+  const [ach,setAch]=useState(null);
+  const [msgs,setMsgs]=useState([{ai:true,text:"مرحباً! 👋 اسألني أي شيء عن الحاسب والتقنية."}]);
+  const [ci,setCi]=useState("");
+  const [typ,setTyp]=useState(false);
+  const [gm,setGm]=useState(null);
+  const [msel,setMsel]=useState(null);
+  const [mdn,setMdn]=useState([]);
+  const [mwr,setMwr]=useState([]);
+  const [sT]=useState(()=>[...MATCH].sort(()=>.5-Math.random()));
+  const [sD]=useState(()=>[...MATCH].sort(()=>.5-Math.random()));
+  const [spt,setSpt]=useState(30);
+  const [sps,setSps]=useState(0);
+  const [spi,setSpi]=useState(0);
+  const [spin,setSpin]=useState("");
+  const [spfb,setSpfb]=useState("");
+  const [spdn,setSpdn]=useState(false);
+  const sptm=useRef(null);
+  const [spq]=useState(()=>[...SPEED].sort(()=>.5-Math.random()));
+  const [fi,setFi]=useState(0);
+  const [fa,setFa]=useState(null);
+  const [fdn,setFdn]=useState(false);
+  const [wi,setWi]=useState(()=>Math.floor(Math.random()*WORDS.length));
+  const [win,setWin]=useState("");
+  const [wtr,setWtr]=useState([]);
+  const [wwn,setWwn]=useState(false);
+  const [mob,setMob]=useState(()=>window.innerWidth<900);
+  const [forceMob,setForceMob]=useState(null);
+  const isMob = forceMob !== null ? forceMob : mob;
+  const cr=useRef(null);
 
-  <div id="p-scan" class="page">
-    <div class="page-header"><h2>لوحة الفحص والتشخيص</h2><p>ارفع صورة أو صف المشكلة وسنعرض لك التوأم الرقمي للقطعة</p></div>
-    <div class="scan-grid">
-      <div>
-        <div class="upload-zone" onclick="showUploadResult()">
-          <div class="upload-icon">📷</div>
-          <h3>ارفع صورة الجهاز</h3>
-          <p>يدعم JPG, PNG, HEIC</p>
-          <button class="upload-btn">اختر ملفاً</button>
+  useEffect(()=>{const h=()=>setMob(window.innerWidth<900);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h);},[]);
+  useEffect(()=>{cr.current?.scrollIntoView({behavior:"smooth"})},[msgs,typ]);
+  useEffect(()=>{if(gm!=="speed"&&sptm.current){clearInterval(sptm.current);sptm.current=null;}},[gm]);
+
+  const d=dk;
+  const s={bg:d?"#0c181d":"#F0F5F7",sf:d?"#13242c":"#fff",s2:d?"#1a3040":"#E8F2F4",bd:d?"rgba(43,191,179,.2)":"rgba(43,191,179,.15)",tx:d?"#e2f0ef":"#1a2a35",t2:d?"#6a9aa3":"#5A6475",sh:d?"0 4px 20px rgba(0,0,0,.5)":"0 4px 20px rgba(43,191,179,.1)"};
+  const aXp=n=>setXp(v=>v+n);
+  const sT2=(i,t)=>{setTst({icon:i,text:t});setTimeout(()=>setTst(null),2200);};
+  const sA=(i,n,x)=>{setAch({i,n,x});setTimeout(()=>setAch(null),3000);};
+  const go=p=>setPg(p);
+  const cd=(e={})=>({background:s.sf,border:`1px solid ${s.bd}`,borderRadius:16,boxShadow:s.sh,...e});
+  const rQ=()=>{setQi(0);setQs(0);setQsel(null);setRes(null);};
+
+  function doLogin(){
+    if(!name.trim()){setEr("يرجى إدخال اسمك");return;}
+    if(!uid.trim()){setEr("يرجى إدخال رقمك التدريبي");return;}
+    if(!pw.trim()){setEr("يرجى إدخال كلمة المرور");return;}
+    setEr("");go("home");setTimeout(()=>sA("🌟","البداية الذكية","+50 XP"),1200);
+  }
+
+  const LogoImg=({h=28,inv=false})=>(
+    <img src={LOGO} alt="TVTC" style={{height:h,width:"auto",objectFit:"contain",filter:inv?"brightness(0) invert(1)":"none"}}/>
+  );
+
+  const Hdr=({title,sub,back})=>(
+    <div style={{background:"linear-gradient(135deg,#0d2233,#0f3545)",padding:"14px 16px 12px",flexShrink:0}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+            <LogoImg h={22} inv={true}/>
+            <span style={{fontSize:10,color:"rgba(255,255,255,.55)",fontWeight:600}}>TVTC Smart Learning</span>
+          </div>
+          <div style={{fontSize:16,fontWeight:800,color:"white"}}>{title}</div>
+          {sub&&<div style={{fontSize:11,color:"rgba(255,255,255,.55)",marginTop:1}}>{sub}</div>}
         </div>
-        <div class="desc-panel">
-          <p style="font-size:13px;color:var(--text-sec);margin-bottom:8px;">أو اكتب وصف المشكلة:</p>
-          <textarea style="width:100%;font-size:13px;padding:8px;border:1.5px solid #B4B2A9;border-radius:8px;height:80px;resize:none;color:var(--text);" placeholder="مثال: مروحة اللابتوب تصدر صوتاً غريباً..."></textarea>
-          <button style="margin-top:8px;width:100%;font-size:13px;padding:9px;background:var(--teal);color:white;border:none;border-radius:8px;cursor:pointer;" onclick="showUploadResult()">تحليل بالذكاء الاصطناعي</button>
+        <div style={{display:"flex",gap:8}}>
+          {back&&<button onClick={()=>go(back)} style={{background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.2)",borderRadius:10,padding:"6px 12px",color:"white",fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>← رجوع</button>}
+          <button onClick={()=>setDk(v=>!v)} style={{width:32,height:32,background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.2)",borderRadius:10,fontSize:14,cursor:"pointer"}}>{d?"☀️":"🌙"}</button>
         </div>
       </div>
-      <div class="twin-panel">
-        <div class="twin-title">التوأم الرقمي</div>
-        <div class="twin-viz">
-          <div class="twin-pulse">💻</div>
-          <div class="twin-dot" style="top:30px;left:80px;opacity:0.5;"></div>
-          <div class="twin-dot" style="top:60px;right:60px;opacity:0.7;"></div>
-        </div>
-        <div class="repair-bar">
-          <div class="repair-label"><span>قابلية الإصلاح</span><span id="repair-pct">—</span></div>
-          <div class="bar-track"><div class="bar-fill" id="repair-bar-fill"></div></div>
-        </div>
-        <div id="twin-result" style="margin-top:12px;display:none;">
-          <p style="font-size:12px;color:rgba(255,255,255,0.85);">تم تحديد العطل: <strong style="color:#5DCAA5;">مروحة التبريد</strong></p>
-          <p style="font-size:12px;color:rgba(255,255,255,0.65);margin-top:4px;">السبب المحتمل: تراكم الغبار وانسداد مجرى الهواء</p>
-          <button style="margin-top:12px;width:100%;font-size:12px;padding:8px;background:#5DCAA5;color:var(--teal-dark);border:none;border-radius:8px;cursor:pointer;font-weight:500;" onclick="goto('guide')">عرض دليل الإصلاح</button>
-        </div>
-      </div>
     </div>
-    <div class="quick-diagnose">
-      <h3>تشخيص سريع حسب نوع الجهاز</h3>
-      <div class="diagnose-items">
-        <div class="d-item" onclick="selectDevice(this,'💻')"><span>💻</span>لابتوب</div>
-        <div class="d-item" onclick="selectDevice(this,'📱')"><span>📱</span>جوال</div>
-        <div class="d-item" onclick="selectDevice(this,'📺')"><span>📺</span>تلفزيون</div>
-        <div class="d-item" onclick="selectDevice(this,'🧊')"><span>🧊</span>ثلاجة</div>
-        <div class="d-item" onclick="selectDevice(this,'🫧')"><span>🫧</span>غسالة</div>
-        <div class="d-item" onclick="selectDevice(this,'❄️')"><span>❄️</span>مكيف</div>
-      </div>
-    </div>
-  </div>
+  );
 
-  <div id="p-guide" class="page" style="flex-direction:column;">
-    <div class="page-header"><h2>دليل الإصلاح التفاعلي</h2><p>إصلاح مروحة اللابتوب — 5 خطوات بسيطة</p></div>
-    <div class="guide-wrapper">
-      <div class="guide-layout" style="flex:1;">
-        <div class="guide-sidebar">
-          <ul class="step-list">
-            <li class="step-item active-step" onclick="setStep(0)"><div class="step-num">1</div>تجهيز المكان</li>
-            <li class="step-item" onclick="setStep(1)"><div class="step-num">2</div>فتح الغطاء</li>
-            <li class="step-item" onclick="setStep(2)"><div class="step-num">3</div>تنظيف المروحة</li>
-            <li class="step-item" onclick="setStep(3)"><div class="step-num">4</div>التأكد من الإصلاح</li>
-            <li class="step-item" onclick="setStep(4)"><div class="step-num">5</div>إغلاق الجهاز</li>
-          </ul>
+  const BottomNav=()=>(
+    <div style={{background:s.sf,borderTop:`1px solid ${s.bd}`,display:"flex",justifyContent:"space-around",padding:"6px 0 8px",flexShrink:0}}>
+      {NAVITEMS.map(n=>(
+        <button key={n.id} onClick={()=>{if(n.id==="quiz")rQ();go(n.id);}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"4px 6px",fontFamily:"inherit"}}>
+          <span style={{fontSize:18}}>{n.ic}</span>
+          <span style={{fontSize:9,color:pg===n.id?"#2BBFB3":s.t2,fontWeight:pg===n.id?700:400}}>{n.lb}</span>
+        </button>
+      ))}
+    </div>
+  );
+
+  const SideNav=()=>(
+    <div style={{width:230,background:s.sf,borderLeft:`1px solid ${s.bd}`,display:"flex",flexDirection:"column",padding:16,gap:4,flexShrink:0,height:"100%",overflowY:"auto"}}>
+      <div style={{textAlign:"center",padding:"0 0 16px",borderBottom:`1px solid ${s.bd}`,marginBottom:8}}>
+        <LogoImg h={44} inv={false}/>
+        <div style={{fontSize:11,color:s.t2,marginTop:6,lineHeight:1.4}}>المؤسسة العامة للتدريب<br/>التقني والمهني</div>
+      </div>
+      {NAVITEMS.map(n=>(
+        <button key={n.id} onClick={()=>{if(n.id==="quiz")rQ();go(n.id);}} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:12,background:pg===n.id?"rgba(43,191,179,.12)":"none",border:pg===n.id?"1px solid rgba(43,191,179,.2)":"1px solid transparent",color:pg===n.id?"#2BBFB3":s.t2,fontWeight:pg===n.id?700:400,fontSize:14,cursor:"pointer",fontFamily:"inherit",textAlign:"right",width:"100%"}}>
+          <span style={{fontSize:18}}>{n.ic}</span>{n.lb}
+        </button>
+      ))}
+      <div style={{marginTop:"auto",padding:"12px 14px",background:s.s2,borderRadius:12,marginTop:16}}>
+        <div style={{fontSize:12,fontWeight:700,marginBottom:6}}>مستواك الحالي 🔰</div>
+        <div style={{height:6,background:d?"rgba(255,255,255,.1)":"rgba(0,0,0,.08)",borderRadius:50,overflow:"hidden"}}>
+          <div style={{height:"100%",background:"linear-gradient(90deg,#2BBFB3,#7BC67A)",width:`${Math.min((xp/500)*100,100)}%`,borderRadius:50}}/>
         </div>
-        <div class="guide-content">
-          <div class="step-visual" id="step-visual">🧰</div>
-          <h3 id="step-title">تجهيز المكان والأدوات</h3>
-          <p id="step-desc">أطفئ اللابتوب تماماً وافصله من الكهرباء. اختر سطحاً مستوياً ومضاءً. تأكد من وجود كافة الأدوات اللازمة أمامك قبل البدء.</p>
-          <div class="tools-needed">
-            <h4>🔧 الأدوات المطلوبة</h4>
-            <div class="tools-list" id="tools-list">
-              <span class="tool-tag">مفك Philips #0</span>
-              <span class="tool-tag">فرشاة ناعمة</span>
-              <span class="tool-tag">علبة هواء مضغوط</span>
-              <span class="tool-tag">قفازات مطاطية</span>
+        <div style={{fontSize:11,color:s.t2,marginTop:4}}>{xp}/500 XP</div>
+        <div style={{fontSize:11,color:s.t2,marginTop:2}}>👤 {name}</div>
+      </div>
+    </div>
+  );
+
+  const PageContent=()=>(
+    <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column",minHeight:0}}>
+
+      {pg==="home"&&<>
+        <Hdr title={`أهلاً، ${name}! 👋`} sub="استمر في رحلة التعلم اليوم"/>
+        <div style={{padding:16,display:"flex",flexDirection:"column",gap:14}}>
+          <div style={{background:"linear-gradient(135deg,#2BBFB3,#1a9990)",borderRadius:18,padding:20,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div>
+              <div style={{color:"rgba(255,255,255,.8)",fontSize:12,marginBottom:6}}>🔰 مستوى مبتدئ</div>
+              <div style={{height:6,background:"rgba(255,255,255,.2)",borderRadius:50,width:160,overflow:"hidden"}}><div style={{height:"100%",background:"white",borderRadius:50,width:`${Math.min((xp/500)*100,100)}%`,transition:"width 1s"}}/></div>
+              <div style={{color:"rgba(255,255,255,.75)",fontSize:11,marginTop:5}}>{xp}/500 XP</div>
+            </div>
+            <div style={{background:"rgba(255,255,255,.15)",borderRadius:14,padding:"12px 16px",textAlign:"center",border:"1px solid rgba(255,255,255,.2)"}}>
+              <div style={{color:"white",fontSize:26,fontWeight:900}}>{xp}</div>
+              <div style={{color:"rgba(255,255,255,.7)",fontSize:11}}>نقطة XP</div>
             </div>
           </div>
-          <div class="step-nav">
-            <button class="step-nav-btn" onclick="prevStep()">→ السابق</button>
-            <button class="step-nav-btn primary" onclick="nextStep()">التالي ←</button>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+            {[["3","🔥 أيام"],["5","📚 دروس"],["2","🏅 شارات"]].map(([n,l])=><div key={l} style={{...cd(),padding:"14px 10px",textAlign:"center"}}><div style={{fontSize:22,fontWeight:900,color:"#2BBFB3"}}>{n}</div><div style={{fontSize:11,color:s.t2,marginTop:2}}>{l}</div></div>)}
+          </div>
+          <div style={{fontSize:15,fontWeight:800}}>⚡ إجراءات سريعة</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+            {[{lb:"اختبار المستوى",ds:"حدد مستواك",ic:"🎯",bg:"linear-gradient(135deg,#2BBFB3,#1a9990)",fn:()=>{rQ();go("quiz");}},{lb:"دروسي",ds:"تابع تعلمك",ic:"📚",bg:"linear-gradient(135deg,#7BC67A,#5aaa59)",fn:()=>go("lessons")},{lb:"ألعاب",ds:"تعلم وامرح",ic:"🎮",bg:"linear-gradient(135deg,#8B5CF6,#7c3aed)",fn:()=>go("games")},{lb:"تقرير",ds:"تابع تقدمك",ic:"📊",bg:"linear-gradient(135deg,#F59E0B,#d97706)",fn:()=>go("report")}].map(a=>(
+              <button key={a.lb} onClick={a.fn} style={{background:a.bg,border:"none",borderRadius:16,padding:"18px 14px",cursor:"pointer",textAlign:"right",display:"flex",flexDirection:"column",gap:8,transition:"transform .2s"}} onMouseOver={e=>e.currentTarget.style.transform="translateY(-2px)"} onMouseOut={e=>e.currentTarget.style.transform="none"}>
+                <span style={{fontSize:24}}>{a.ic}</span>
+                <span style={{color:"white",fontSize:13,fontWeight:700,fontFamily:"inherit"}}>{a.lb}</span>
+                <span style={{color:"rgba(255,255,255,.75)",fontSize:11,fontFamily:"inherit"}}>{a.ds}</span>
+              </button>
+            ))}
+          </div>
+          <div style={{...cd(),padding:16,display:"flex",gap:12,alignItems:"flex-start"}}>
+            <div style={{width:44,height:44,background:"linear-gradient(135deg,#FEF3C7,#FDE68A)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>💡</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:11,color:s.t2,marginBottom:4,fontWeight:600}}>نصيحة اليوم من TVTC</div>
+              <div style={{fontSize:14,lineHeight:1.6}}>{TIPS[ti]}</div>
+              <button onClick={()=>setTi(i=>(i+1)%TIPS.length)} style={{background:s.s2,border:`1px solid ${s.bd}`,borderRadius:8,padding:"5px 12px",fontSize:12,fontFamily:"inherit",color:s.t2,cursor:"pointer",marginTop:8}}>🔄 نصيحة أخرى</button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="chat-fab" id="chat-fab" onclick="toggleChat()">💬</div>
-      <div class="chat-overlay" id="chat-overlay">
-        <div class="chat-header"><span>المساعد الذكي</span><button class="chat-close" onclick="toggleChat()">✕</button></div>
-        <div class="chat-msgs" id="chat-msgs"><div class="msg bot">مرحباً! كيف يمكنني مساعدتك في هذه الخطوة؟</div></div>
-        <div class="chat-input-row">
-          <input class="chat-input" id="chat-inp" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter')sendChat()">
-          <button class="chat-send" onclick="sendChat()">إرسال</button>
+      </>}
+
+      {pg==="quiz"&&<>
+        <Hdr title="اختبار تحديد المستوى 🎯" sub={`السؤال ${qi+1} من ${QUIZ.length}`} back="home"/>
+        <div style={{padding:16}}>
+          <div style={{height:6,background:s.s2,borderRadius:50,overflow:"hidden",marginBottom:20}}><div style={{height:"100%",background:"linear-gradient(90deg,#2BBFB3,#7BC67A)",borderRadius:50,width:`${((qi+1)/QUIZ.length)*100}%`,transition:"width .5s"}}/></div>
+          <div style={{...cd(),padding:22,textAlign:"center",marginBottom:16}}><div style={{fontSize:17,fontWeight:700,lineHeight:1.55}}>{QUIZ[qi].q}</div></div>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {QUIZ[qi].opts.map((o,i)=>{
+              let bg=s.sf,border=`2px solid ${s.bd}`,color=s.tx;
+              if(qsel!==null){if(i===QUIZ[qi].c){bg="#ECFDF5";border="2px solid #7BC67A";color="#065f46";}else if(i===qsel){bg="#FEF2F2";border="2px solid #EF4444";color="#991b1b";}}
+              return<button key={i} onClick={()=>ansQ(i)} style={{background:bg,border,borderRadius:14,padding:"14px 18px",fontSize:14,fontFamily:"inherit",cursor:qsel!==null?"default":"pointer",textAlign:"right",color,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span>{o}</span>
+                {qsel!==null&&i===QUIZ[qi].c&&<span style={{color:"#7BC67A",fontWeight:900}}>✓</span>}
+                {qsel!==null&&i===qsel&&i!==QUIZ[qi].c&&<span style={{color:"#EF4444",fontWeight:900}}>✗</span>}
+              </button>;
+            })}
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </>}
 
-  <div id="p-rewards" class="page">
-    <div class="page-header"><h2>النقاط والمكافآت</h2><p>تتبع أثرك البيئي واستبدل نقاطك</p></div>
-    <div class="rewards-layout">
-      <div class="points-hero">
-        <div class="points-left"><h2>محفظة نقاطك</h2><div class="big">1,240</div><p>+ 80 نقطة هذا الأسبوع</p></div>
-        <div class="tree-visual">🌳</div>
-      </div>
-      <div class="impact-grid">
-        <div class="impact-card"><div class="i-num">4.2 kg</div><div class="i-label">نفايات إلكترونية تم تجنبها</div></div>
-        <div class="impact-card"><div class="i-num">7</div><div class="i-label">إصلاح ناجح</div></div>
-        <div class="impact-card"><div class="i-num">12 kg</div><div class="i-label">CO₂ تم توفيره</div></div>
-      </div>
-      <div class="rewards-section">
-        <h3>المكافآت المتاحة</h3>
-        <div class="rewards-grid">
-          <div class="reward-card"><div class="reward-img">🛒</div><h4>خصم 20% في متجر قطع الغيار</h4><div class="pts">500 نقطة</div><p>صالح لمدة 30 يوماً</p><button class="redeem-btn">استبدل الآن</button></div>
-          <div class="reward-card"><div class="reward-img">🎓</div><h4>دورة تدريبية في الإصلاح</h4><div class="pts">800 نقطة</div><p>وصول لمدة شهر كامل</p><button class="redeem-btn">استبدل الآن</button></div>
-          <div class="reward-card"><div class="reward-img">🌱</div><h4>زرع شجرة بإسمك</h4><div class="pts">300 نقطة</div><p>شهادة إلكترونية بالأثر البيئي</p><button class="redeem-btn">استبدل الآن</button></div>
+      {pg==="result"&&res&&<>
+        <Hdr title="نتيجة الاختبار 📊" back="home"/>
+        <div style={{padding:24,display:"flex",flexDirection:"column",alignItems:"center",gap:20,textAlign:"center"}}>
+          <div style={{width:140,height:140,borderRadius:"50%",background:"linear-gradient(135deg,#2BBFB3,#7BC67A)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:"0 0 50px rgba(43,191,179,.35)"}}>
+            <span style={{fontSize:48}}>{res.emoji}</span><span style={{color:"white",fontSize:13,fontWeight:800}}>{res.level}</span>
+          </div>
+          <div style={{fontSize:22,fontWeight:900}}>أنت في المستوى {res.level}!</div>
+          <div style={{...cd(),padding:20,fontSize:14,lineHeight:1.7,color:s.t2}}>{res.desc}</div>
+          <button onClick={()=>go("lessons")} style={{padding:"14px 36px",background:"linear-gradient(135deg,#2BBFB3,#1a9990)",border:"none",borderRadius:50,color:"white",fontSize:15,fontWeight:800,fontFamily:"inherit",cursor:"pointer"}}>ابدأ التعلم الآن 🚀</button>
+          <button onClick={()=>go("home")} style={{background:s.s2,border:`1px solid ${s.bd}`,borderRadius:50,padding:"10px 24px",fontSize:13,fontFamily:"inherit",cursor:"pointer",color:s.t2}}>العودة للرئيسية</button>
         </div>
-      </div>
-    </div>
-  </div>
+      </>}
 
-  <div id="p-community" class="page">
-    <div class="page-header"><h2>مجتمع الخبراء</h2><p>تواصل مع فنيين متطوعين وشارك قصص النجاح</p></div>
-    <div class="community-layout">
-      <h3 style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:12px;">خبراء متاحون الآن</h3>
-      <div class="comm-grid">
-        <div class="expert-card"><div class="avatar">أح</div><div class="expert-info"><h4>أحمد الحربي</h4><p>تقييم: ⭐ 4.9 · 120 إصلاح</p><div class="skills"><span class="skill-tag">لابتوب</span><span class="skill-tag">جوال</span></div><button class="contact-expert">تواصل الآن</button></div></div>
-        <div class="expert-card"><div class="avatar">سا</div><div class="expert-info"><h4>سارة العتيبي</h4><p>تقييم: ⭐ 4.8 · 85 إصلاح</p><div class="skills"><span class="skill-tag">أجهزة منزلية</span><span class="skill-tag">ثلاجة</span></div><button class="contact-expert">تواصل الآن</button></div></div>
-        <div class="expert-card"><div class="avatar">خا</div><div class="expert-info"><h4>خالد القحطاني</h4><p>تقييم: ⭐ 5.0 · 200 إصلاح</p><div class="skills"><span class="skill-tag">إلكترونيات</span><span class="skill-tag">تلفزيون</span></div><button class="contact-expert">تواصل الآن</button></div></div>
-        <div class="expert-card"><div class="avatar">نو</div><div class="expert-info"><h4>نورة السبيعي</h4><p>تقييم: ⭐ 4.7 · 60 إصلاح</p><div class="skills"><span class="skill-tag">غسالة</span><span class="skill-tag">مكيف</span></div><button class="contact-expert">تواصل الآن</button></div></div>
-      </div>
-      <div class="gallery-title">معرض النجاح — قبل وبعد</div>
-      <div class="gallery-grid">
-        <div class="gallery-item"><div class="before-after"><div class="ba-half">🖥️<div class="ba-label">قبل</div></div><div class="ba-half">✨<div class="ba-label">بعد</div></div></div><button class="share-btn">شاهد القصة</button></div>
-        <div class="gallery-item"><div class="before-after"><div class="ba-half">📱<div class="ba-label">قبل</div></div><div class="ba-half">✨<div class="ba-label">بعد</div></div></div><button class="share-btn">شاهد القصة</button></div>
-        <div class="gallery-item"><div class="before-after"><div class="ba-half">🔌<div class="ba-label">قبل</div></div><div class="ba-half">✨<div class="ba-label">بعد</div></div></div><button class="share-btn">شاهد القصة</button></div>
-      </div>
-    </div>
-  </div>
-</div>
+      {pg==="lessons"&&<>
+        <Hdr title="مساري التعليمي 📚" sub="اختر درساً لتبدأ" back="home"/>
+        <div style={{padding:16,display:"flex",flexDirection:"column",gap:10}}>
+          {Object.entries(LESSONS).map(([id,L])=>{
+            const p=pr[id]||0;
+            return<button key={id} onClick={()=>{setLs(id);go("lesson");}} style={{...cd(),padding:"16px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",textAlign:"right",width:"100%",border:`1px solid ${s.bd}`}}>
+              <div style={{width:48,height:48,borderRadius:14,background:`${L.color}22`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{L.icon}</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,fontWeight:700,color:s.tx}}>{L.title}</div>
+                <div style={{height:4,background:s.s2,borderRadius:50,marginTop:8,overflow:"hidden"}}><div style={{height:"100%",background:L.color,borderRadius:50,width:`${(p/L.steps.length)*100}%`}}/></div>
+                <div style={{fontSize:11,color:s.t2,marginTop:4}}>{p}/{L.steps.length} خطوات</div>
+              </div>
+              <span style={{color:s.t2}}>←</span>
+            </button>;
+          })}
+        </div>
+      </>}
 
-<script>
-const pages={landing:'p-landing',scan:'p-scan',guide:'p-guide',rewards:'p-rewards',community:'p-community'};
-const navIdx={landing:0,scan:1,guide:2,rewards:3,community:4};
-function goto(name){
-  Object.values(pages).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
-  const t=document.getElementById(pages[name]);if(t)t.classList.add('active');
-  const btns=document.querySelectorAll('.nav-btn');
-  btns.forEach((b,i)=>b.classList.toggle('active',i===navIdx[name]));
-  const fab=document.getElementById('chat-fab');
-  if(fab)fab.style.display=name==='guide'?'flex':'none';
-  if(name==='landing')animateCounters();
+      {pg==="lesson"&&ls&&<>
+        <Hdr title={LESSONS[ls].title} sub={`${pr[ls]||0}/${LESSONS[ls].steps.length} مكتمل`} back="lessons"/>
+        <div style={{padding:16,display:"flex",flexDirection:"column",gap:12}}>
+          {LESSONS[ls].steps.map((step,i)=>{
+            const p=pr[ls]||0,isDone=i<p,isAct=i===p;
+            return<div key={i} style={{...cd(),padding:18,border:`2px solid ${isDone?"#7BC67A":isAct?LESSONS[ls].color:s.bd}`,opacity:i>p?.5:1}}>
+              <div style={{width:26,height:26,borderRadius:"50%",background:isDone?"#7BC67A":isAct?LESSONS[ls].color:s.s2,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,color:isDone||isAct?"white":s.t2,marginBottom:10}}>{isDone?"✓":i+1}</div>
+              <div style={{fontSize:13,fontWeight:700,color:s.t2,marginBottom:6}}>{step.t}</div>
+              <div style={{fontSize:14,lineHeight:1.7}}>{step.c}</div>
+              {i<=p&&<button onClick={()=>cmpStep(i)} style={{marginTop:12,width:"100%",padding:"11px 0",background:isDone?`${LESSONS[ls].color}18`:`${LESSONS[ls].color}12`,border:`${isDone?"2px solid":"2px dashed"} ${isDone?"#7BC67A":LESSONS[ls].color}`,borderRadius:12,fontSize:13,fontFamily:"inherit",color:isDone?"#065f46":LESSONS[ls].color,cursor:isDone?"default":"pointer"}}>{isDone?"✅ مكتمل":step.a}</button>}
+            </div>;
+          })}
+        </div>
+      </>}
+
+      {pg==="games"&&<>
+        <Hdr title="الألعاب التعليمية 🎮" sub="تعلم بطريقة ممتعة" back="home"/>
+        <div style={{padding:16}}>
+          {!gm&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+            {[{id:"match",ic:"🔗",nm:"مطابقة المفاهيم",ds:"طابق المصطلح مع تعريفه"},{id:"speed",ic:"⚡",nm:"سباق الإجابات",ds:"أجب على أكبر عدد في 30 ثانية"},{id:"fill",ic:"✏️",nm:"أكمل الجملة",ds:"اختر الكلمة الناقصة"},{id:"word",ic:"💭",nm:"خمّن الكلمة",ds:"خمّن المصطلح من التلميح"}].map(g=>(
+              <button key={g.id} onClick={()=>{setGm(g.id);if(g.id==="speed"){setSpt(30);setSps(0);setSpi(0);setSpin("");setSpfb("");setSpdn(false);}if(g.id==="fill"){setFi(0);setFa(null);setFdn(false);}if(g.id==="word"){setWi(Math.floor(Math.random()*WORDS.length));setWin("");setWtr([]);setWwn(false);}if(g.id==="match"){setMdn([]);setMsel(null);setMwr([]);}}}
+                style={{...cd(),padding:"22px 16px",textAlign:"center",cursor:"pointer",border:`1px solid ${s.bd}`,transition:"transform .2s"}} onMouseOver={e=>e.currentTarget.style.transform="translateY(-3px)"} onMouseOut={e=>e.currentTarget.style.transform="none"}>
+                <div style={{fontSize:40,marginBottom:10}}>{g.ic}</div>
+                <div style={{fontSize:14,fontWeight:800,marginBottom:6}}>{g.nm}</div>
+                <div style={{fontSize:12,color:s.t2}}>{g.ds}</div>
+              </button>
+            ))}
+          </div>}
+
+          {gm==="match"&&<div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+              <div style={{fontSize:15,fontWeight:800}}>🔗 مطابقة المفاهيم</div>
+              <button onClick={()=>setGm(null)} style={{background:s.s2,border:`1px solid ${s.bd}`,borderRadius:10,padding:"6px 12px",fontSize:12,fontFamily:"inherit",cursor:"pointer",color:s.t2}}>← رجوع</button>
+            </div>
+            {mdn.length===MATCH.length?
+              <div style={{textAlign:"center",padding:40}}><div style={{fontSize:56,marginBottom:12}}>🎉</div><div style={{fontSize:20,fontWeight:900,color:"#2BBFB3"}}>أحسنت! أكملت المطابقة!</div><button onClick={()=>{setMdn([]);setMsel(null);setMwr([]);}} style={{marginTop:16,padding:"12px 28px",background:"#2BBFB3",border:"none",borderRadius:12,color:"white",fontFamily:"inherit",fontSize:14,cursor:"pointer"}}>مرة أخرى</button></div>:
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+                {[{items:sT,tp:"term"},{items:sD,tp:"def"}].map(col=>(
+                  <div key={col.tp} style={{display:"flex",flexDirection:"column",gap:8}}>
+                    <div style={{fontSize:12,fontWeight:700,color:s.t2,textAlign:"center",marginBottom:4}}>{col.tp==="term"?"المصطلح":"التعريف"}</div>
+                    {col.items.map(it=>{
+                      const dn=mdn.includes(it.term),sl=msel?.item.term===it.term&&msel?.tp===col.tp,wr=mwr.includes(it.term+"_"+col.tp[0]);
+                      return<button key={it.term+col.tp} onClick={()=>clkM(it,col.tp)} disabled={dn} style={{padding:"12px 10px",borderRadius:12,border:`2px solid ${dn?"#7BC67A":wr?"#EF4444":sl?"#2BBFB3":s.bd}`,background:dn?"rgba(123,198,122,.12)":wr?"rgba(239,68,68,.08)":sl?"rgba(43,191,179,.1)":s.sf,fontSize:13,fontWeight:700,fontFamily:"inherit",cursor:dn?"default":"pointer",color:dn?"#065f46":s.tx,transition:"all .2s"}}>{col.tp==="term"?it.term:it.def}</button>;
+                    })}
+                  </div>
+                ))}
+              </div>}
+          </div>}
+
+          {gm==="speed"&&<div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+              <div style={{fontSize:15,fontWeight:800}}>⚡ سباق الإجابات</div>
+              <button onClick={()=>{clearInterval(sptm.current);sptm.current=null;setGm(null);}} style={{background:s.s2,border:`1px solid ${s.bd}`,borderRadius:10,padding:"6px 12px",fontSize:12,fontFamily:"inherit",cursor:"pointer",color:s.t2}}>← رجوع</button>
+            </div>
+            {spdn?
+              <div style={{textAlign:"center",padding:40}}><div style={{fontSize:56,marginBottom:12}}>🏁</div><div style={{fontSize:22,fontWeight:900,color:"#2BBFB3"}}>انتهى الوقت!</div><div style={{fontSize:18,margin:"12px 0"}}>{sps} نقطة</div><button onClick={()=>{setSpt(30);setSps(0);setSpi(0);setSpin("");setSpfb("");setSpdn(false);clearInterval(sptm.current);sptm.current=null;}} style={{padding:"12px 28px",background:"#2BBFB3",border:"none",borderRadius:12,color:"white",fontFamily:"inherit",fontSize:14,cursor:"pointer"}}>مرة أخرى</button></div>:
+              <div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:40,fontWeight:900,color:spt<=10?"#EF4444":"#2BBFB3"}}>{spt}ث</div><div style={{fontSize:18,fontWeight:700}}>النقاط: {sps}</div></div>
+                <div style={{...cd(),padding:24,textAlign:"center",fontSize:18,fontWeight:700,marginBottom:20}}>{spq[spi%spq.length].q}</div>
+                <div style={{display:"flex",gap:10}}>
+                  <input value={spin} onChange={e=>setSpin(e.target.value)} onKeyDown={e=>e.key==="Enter"&&chkSp()} placeholder="اكتب الجواب..." autoFocus style={{flex:1,padding:"12px 16px",border:`1.5px solid ${s.bd}`,borderRadius:12,fontFamily:"inherit",fontSize:15,outline:"none",background:s.s2,color:s.tx,direction:"rtl"}}/>
+                  <button onClick={chkSp} style={{padding:"12px 20px",background:"#2BBFB3",border:"none",borderRadius:12,color:"white",fontFamily:"inherit",fontSize:15,cursor:"pointer"}}>إرسال</button>
+                </div>
+                {spfb&&<div style={{textAlign:"center",marginTop:12,fontSize:16,fontWeight:700,color:spfb.includes("✅")?"#7BC67A":"#EF4444"}}>{spfb}</div>}
+                {!sptm.current&&<button onClick={stSp} style={{marginTop:16,width:"100%",padding:"13px 0",background:"linear-gradient(135deg,#2BBFB3,#1a9990)",border:"none",borderRadius:12,color:"white",fontFamily:"inherit",fontSize:15,fontWeight:700,cursor:"pointer"}}>▶ ابدأ الآن</button>}
+              </div>}
+          </div>}
+
+          {gm==="fill"&&<div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+              <div style={{fontSize:15,fontWeight:800}}>✏️ أكمل الجملة ({fi+1}/{FILL.length})</div>
+              <button onClick={()=>setGm(null)} style={{background:s.s2,border:`1px solid ${s.bd}`,borderRadius:10,padding:"6px 12px",fontSize:12,fontFamily:"inherit",cursor:"pointer",color:s.t2}}>← رجوع</button>
+            </div>
+            {fdn?
+              <div style={{textAlign:"center",padding:40}}><div style={{fontSize:56,marginBottom:12}}>🎊</div><div style={{fontSize:20,fontWeight:900,color:"#2BBFB3"}}>أكملت جميع الأسئلة!</div><button onClick={()=>{setFi(0);setFa(null);setFdn(false);}} style={{marginTop:16,padding:"12px 28px",background:"#2BBFB3",border:"none",borderRadius:12,color:"white",fontFamily:"inherit",fontSize:14,cursor:"pointer"}}>مرة أخرى</button></div>:
+              <div>
+                <div style={{...cd(),padding:24,textAlign:"center",fontSize:18,fontWeight:700,marginBottom:20,lineHeight:1.5}}>{FILL[fi].q}</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                  {FILL[fi].opts.map((o,i)=>{
+                    let bg=s.sf,br=`2px solid ${s.bd}`,co=s.tx;
+                    if(fa!==null){if(i===FILL[fi].c){bg="rgba(123,198,122,.12)";br="2px solid #7BC67A";co="#065f46";}else if(i===fa&&i!==FILL[fi].c){bg="rgba(239,68,68,.08)";br="2px solid #EF4444";co="#991b1b";}}
+                    return<button key={i} onClick={()=>ansFl(i)} disabled={fa!==null} style={{padding:"14px 10px",borderRadius:14,border:br,background:bg,fontSize:14,fontFamily:"inherit",cursor:fa!==null?"default":"pointer",color:co,transition:"all .2s"}}>{o}</button>;
+                  })}
+                </div>
+              </div>}
+          </div>}
+
+          {gm==="word"&&<div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+              <div style={{fontSize:15,fontWeight:800}}>💭 خمّن الكلمة</div>
+              <button onClick={()=>setGm(null)} style={{background:s.s2,border:`1px solid ${s.bd}`,borderRadius:10,padding:"6px 12px",fontSize:12,fontFamily:"inherit",cursor:"pointer",color:s.t2}}>← رجوع</button>
+            </div>
+            <div style={{...cd(),padding:18,marginBottom:16,textAlign:"center"}}><div style={{fontSize:12,color:s.t2,marginBottom:6,fontWeight:600}}>التلميح 💡</div><div style={{fontSize:15,lineHeight:1.6}}>{WORDS[wi].clue}</div></div>
+            <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:20}}>
+              {WORDS[wi].word.split("").map((_,i)=><div key={i} style={{width:40,height:48,borderRadius:10,background:wwn?"rgba(123,198,122,.15)":s.s2,border:`2px solid ${wwn?"#7BC67A":s.bd}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:800,color:wwn?"#065f46":s.tx,transition:"all .3s"}}>{wwn?WORDS[wi].word[i]:""}</div>)}
+            </div>
+            {wwn?
+              <div style={{textAlign:"center"}}><div style={{fontSize:40,marginBottom:8}}>🎉</div><div style={{fontSize:18,fontWeight:800,color:"#2BBFB3",marginBottom:16}}>أحسنت! الجواب: {WORDS[wi].word}</div><button onClick={()=>{setWi(Math.floor(Math.random()*WORDS.length));setWin("");setWtr([]);setWwn(false);}} style={{padding:"12px 28px",background:"#2BBFB3",border:"none",borderRadius:12,color:"white",fontFamily:"inherit",fontSize:14,cursor:"pointer"}}>كلمة جديدة</button></div>:
+              <div>
+                {wtr.length<6&&<div style={{display:"flex",gap:10,marginBottom:12}}>
+                  <input value={win} onChange={e=>setWin(e.target.value.toUpperCase().slice(0,WORDS[wi].word.length))} onKeyDown={e=>e.key==="Enter"&&gsW()} placeholder="اكتب تخمينك..." style={{flex:1,padding:"12px 16px",border:`1.5px solid ${s.bd}`,borderRadius:12,fontFamily:"inherit",fontSize:15,outline:"none",background:s.s2,color:s.tx,direction:"ltr",letterSpacing:4,textAlign:"center",fontWeight:700}}/>
+                  <button onClick={gsW} style={{padding:"12px 20px",background:"#2BBFB3",border:"none",borderRadius:12,color:"white",fontFamily:"inherit",fontSize:15,cursor:"pointer"}}>تحقق</button>
+                </div>}
+                {wtr.length>=6&&!wwn&&<div style={{textAlign:"center",marginBottom:16}}><div style={{color:"#EF4444",fontWeight:700,marginBottom:8}}>انتهت المحاولات! الجواب: {WORDS[wi].word}</div><button onClick={()=>{setWi(Math.floor(Math.random()*WORDS.length));setWin("");setWtr([]);setWwn(false);}} style={{padding:"10px 24px",background:"#2BBFB3",border:"none",borderRadius:12,color:"white",fontFamily:"inherit",fontSize:14,cursor:"pointer"}}>حاولي مرة أخرى</button></div>}
+                <div style={{fontSize:12,color:s.t2,textAlign:"center",marginBottom:10}}>المحاولات المتبقية: {Math.max(0,6-wtr.length)}</div>
+                {wtr.map((t,i)=><div key={i} style={{display:"flex",justifyContent:"center",gap:6,marginTop:8}}>{t.split("").map((c,j)=><div key={j} style={{width:36,height:36,borderRadius:8,background:WORDS[wi].word.includes(c)?"rgba(245,158,11,.2)":s.s2,border:`1px solid ${WORDS[wi].word.includes(c)?"#F59E0B":s.bd}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700}}>{c}</div>)}</div>)}
+              </div>}
+          </div>}
+        </div>
+      </>}
+
+      {pg==="chat"&&<div style={{display:"flex",flexDirection:"column",flex:1,minHeight:0}}>
+        <Hdr title="المساعد الذكي 🤖" sub="اسألني أي شيء عن الحاسب" back="home"/>
+        <div style={{flex:1,overflowY:"auto",padding:"14px 14px 0"}}>
+          {msgs.map((m,i)=><div key={i} style={{display:"flex",justifyContent:m.ai?"flex-end":"flex-start",marginBottom:12}}>
+            <div style={{maxWidth:"78%",padding:"11px 15px",borderRadius:16,fontSize:14,lineHeight:1.6,background:m.ai?"linear-gradient(135deg,#2BBFB3,#1a9990)":s.sf,color:m.ai?"white":s.tx,borderBottomLeftRadius:m.ai?5:16,borderBottomRightRadius:m.ai?16:5,border:m.ai?"none":`1px solid ${s.bd}`}}>{m.text}</div>
+          </div>)}
+          {typ&&<div style={{display:"flex",justifyContent:"flex-end",marginBottom:12}}><div style={{padding:"11px 18px",borderRadius:16,background:"linear-gradient(135deg,#2BBFB3,#1a9990)",borderBottomLeftRadius:5,display:"flex",gap:5,alignItems:"center"}}>{[0,1,2].map(i=><div key={i} style={{width:7,height:7,background:"rgba(255,255,255,.7)",borderRadius:"50%",animation:`b${i} 1.2s ease-in-out infinite`}}/>)}</div></div>}
+          <div ref={cr}/>
+        </div>
+        <div style={{display:"flex",gap:8,overflowX:"auto",padding:"10px 14px 0",scrollbarWidth:"none"}}>
+          {["ما هو RAM؟","كيف أحمي جهازي؟","ما هو CPU؟","اشرح الإنترنت","ما هو Cloud؟"].map(q=><button key={q} onClick={()=>sndC(q)} style={{whiteSpace:"nowrap",padding:"7px 14px",background:s.s2,border:`1px solid ${s.bd}`,borderRadius:50,fontSize:12,fontFamily:"inherit",cursor:"pointer",color:s.t2,flexShrink:0}}>{q}</button>)}
+        </div>
+        <div style={{display:"flex",gap:10,padding:"10px 14px 14px",background:s.sf,borderTop:`1px solid ${s.bd}`,flexShrink:0}}>
+          <input value={ci} onChange={e=>setCi(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sndC()} placeholder="اكتب سؤالك..." style={{flex:1,padding:"11px 14px",border:`1.5px solid ${s.bd}`,borderRadius:12,fontFamily:"inherit",fontSize:14,outline:"none",background:s.s2,color:s.tx,direction:"rtl"}}/>
+          <button onClick={()=>sndC()} style={{width:44,height:44,background:"linear-gradient(135deg,#2BBFB3,#1a9990)",border:"none",borderRadius:12,color:"white",fontSize:18,cursor:"pointer",flexShrink:0}}>➤</button>
+        </div>
+      </div>}
+
+      {pg==="report"&&<>
+        <Hdr title="التقرير الأسبوعي 📊" sub="آخر 7 أيام" back="home"/>
+        <div style={{padding:16,display:"flex",flexDirection:"column",gap:14}}>
+          <div style={{background:"linear-gradient(135deg,#0d2233,#0f3545)",borderRadius:18,padding:20,display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:12}}>
+            {[["150","إجمالي XP"],["5","دروس"],["3","أيام"],["80%","الدقة"]].map(([n,l])=><div key={l} style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:900,color:"#2BBFB3"}}>{n}</div><div style={{fontSize:10,color:"rgba(255,255,255,.6)",marginTop:3}}>{l}</div></div>)}
+          </div>
+          <div style={{...cd(),padding:20}}>
+            <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>📅 نشاط الأسبوع</div>
+            {[["أحد",80],["إثن",0],["ثلاث",60],["أرب",0],["خمس",100],["جمع",40],["سبت",20]].map(([d2,v])=><div key={d2} style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><span style={{width:28,fontSize:12,color:s.t2,textAlign:"center",flexShrink:0}}>{d2}</span><div style={{flex:1,height:8,background:s.s2,borderRadius:50,overflow:"hidden"}}><div style={{height:"100%",background:"linear-gradient(90deg,#2BBFB3,#7BC67A)",borderRadius:50,width:`${v}%`}}/></div><span style={{width:36,fontSize:11,color:s.t2}}>{v/2} XP</span></div>)}
+          </div>
+          <div style={{...cd(),padding:20}}>
+            <div style={{fontSize:15,fontWeight:800,marginBottom:14}}>🏆 الإنجازات</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+              {[{ic:"🌟",nm:"البداية الذكية",xp:"+50 XP",ok:true},{ic:"🎯",nm:"المختبر",xp:"+100 XP",ok:true},{ic:"📚",nm:"القارئ النهم",xp:"+200 XP",ok:false},{ic:"🔥",nm:"الثابت",xp:"+300 XP",ok:false},{ic:"🎮",nm:"اللاعب",xp:"+150 XP",ok:false},{ic:"🧠",nm:"العبقري",xp:"+500 XP",ok:false}].map(a=><div key={a.nm} style={{...cd(),padding:"14px 12px",textAlign:"center",opacity:a.ok?1:.4,filter:a.ok?"none":"grayscale(1)"}}><div style={{fontSize:30,marginBottom:6}}>{a.ic}</div><div style={{fontSize:12,fontWeight:700}}>{a.nm}</div><div style={{marginTop:5,display:"inline-block",background:"rgba(43,191,179,.1)",color:"#2BBFB3",padding:"2px 8px",borderRadius:50,fontSize:10,fontWeight:700}}>{a.xp}</div></div>)}
+            </div>
+          </div>
+        </div>
+      </>}
+    </div>
+  );
+
+  // ── LOGIN ──
+  if(pg==="login"){
+    const card=(
+      <div style={{width:"100%",maxWidth:420,background:"rgba(255,255,255,.07)",backdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,.12)",borderRadius:28,padding:32,boxShadow:"0 24px 80px rgba(0,0,0,.5)"}}>
+        <div style={{textAlign:"center",marginBottom:22}}>
+          <img src={LOGO} alt="TVTC" style={{height:72,width:"auto",objectFit:"contain",marginBottom:10,filter:"drop-shadow(0 4px 16px rgba(43,191,179,.4))"}}/>
+          <div style={{color:"white",fontSize:15,fontWeight:800,lineHeight:1.4}}>المؤسسة العامة للتدريب التقني والمهني</div>
+          <div style={{color:"rgba(255,255,255,.5)",fontSize:11,marginTop:3}}>Technical and Vocational Training Corporation</div>
+        </div>
+        <div style={{color:"white",fontSize:18,fontWeight:800,textAlign:"center",marginBottom:18}}>تسجيل الدخول</div>
+        {[{lb:"الاسم",v:name,fn:setName,ph:"اكتبي اسمك الكامل",id:"ni",tp:"text",nx:"ii"},{lb:"الرقم التدريبي",v:uid,fn:setUid,ph:"",id:"ii",tp:"number",nx:"pi"},{lb:"كلمة المرور",v:pw,fn:setPw,ph:"••••••••",id:"pi",tp:"password",nx:null}].map(f=>(
+          <div key={f.id} style={{marginBottom:14}}>
+            <div style={{color:"rgba(255,255,255,.7)",fontSize:13,marginBottom:6,fontWeight:600}}>{f.lb}</div>
+            <input id={f.id} type={f.tp} value={f.v} onChange={e=>f.fn(e.target.value)} placeholder={f.ph}
+              onKeyDown={e=>{if(e.key==="Enter"){if(f.nx)document.getElementById(f.nx)?.focus();else doLogin();}}}
+              style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,.08)",border:"1.5px solid rgba(255,255,255,.15)",borderRadius:14,color:"white",fontSize:15,fontFamily:"inherit",outline:"none",boxSizing:"border-box",direction:"rtl"}}/>
+          </div>
+        ))}
+        {er&&<div style={{color:"#ff6b6b",fontSize:13,textAlign:"center",marginBottom:12}}>⚠️ {er}</div>}
+        <button onClick={doLogin} style={{width:"100%",padding:14,background:"linear-gradient(135deg,#2BBFB3,#1a9990)",border:"none",borderRadius:14,color:"white",fontSize:16,fontWeight:800,fontFamily:"inherit",cursor:"pointer",boxShadow:"0 8px 24px rgba(43,191,179,.35)"}}>دخول ←</button>
+      </div>
+    );
+    return(
+      <div dir="rtl" style={{minHeight:"100vh",background:"linear-gradient(160deg,#0d2233,#0f3040)",display:"flex",alignItems:"center",justifyContent:"center",padding:20,fontFamily:"Tajawal,Arial,sans-serif"}}>
+        {mob?(card):(
+          {card}
+        )}
+      </div>
+    );
+  }
+
+  // ── MAIN ──
+  if(isMob){
+    return(
+      <div dir="rtl" style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"#0d0d1a",fontFamily:"Tajawal,Arial,sans-serif",padding:"20px 0",position:"relative"}}>
+        {tst&&<div style={{position:"fixed",bottom:"calc(50% - 380px)",left:"50%",transform:"translateX(-50%)",background:s.sf,border:`1px solid ${s.bd}`,borderRadius:14,padding:"12px 20px",boxShadow:"0 8px 32px rgba(0,0,0,.25)",display:"flex",alignItems:"center",gap:10,zIndex:9999,whiteSpace:"nowrap"}}><span style={{fontSize:18}}>{tst.icon}</span><span style={{fontSize:14,fontWeight:600}}>{tst.text}</span></div>}
+        {ach&&<div style={{position:"fixed",top:60,left:"50%",transform:"translateX(-50%)",background:"linear-gradient(135deg,#2BBFB3,#7BC67A)",borderRadius:16,padding:"12px 20px",display:"flex",alignItems:"center",gap:10,zIndex:9999,boxShadow:"0 8px 32px rgba(0,0,0,.3)",color:"white"}}><span style={{fontSize:20}}>{ach.i}</span><div><div style={{fontSize:10,opacity:.8}}>إنجاز!</div><div style={{fontSize:13,fontWeight:700}}>{ach.n}</div></div><span style={{fontSize:12}}>{ach.x}</span></div>}
+        <button onClick={()=>setForceMob(false)} style={{position:"fixed",top:12,left:12,zIndex:9998,background:"rgba(43,191,179,.2)",border:"1px solid rgba(43,191,179,.4)",borderRadius:10,padding:"6px 14px",fontSize:12,cursor:"pointer",color:"#2BBFB3",fontFamily:"inherit",fontWeight:700,display:"flex",alignItems:"center",gap:6}}>
+          <span style={{fontSize:16}}>💻</span><span>لابتوب</span>
+        </button>
+        <div style={{width:390,height:844,background:s.bg,borderRadius:50,border:"12px solid #111",boxShadow:"0 0 0 3px #333,0 0 0 4px #222,0 40px 100px rgba(0,0,0,.8)",overflow:"hidden",display:"flex",flexDirection:"column",position:"relative",flexShrink:0}}>
+          <div style={{position:"absolute",top:0,left:"50%",transform:"translateX(-50%)",width:130,height:36,background:"#111",borderRadius:"0 0 22px 22px",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
+            <div style={{width:10,height:10,borderRadius:"50%",background:"#1a1a1a",border:"2px solid #2a2a2a"}}/>
+            <div style={{width:56,height:6,borderRadius:3,background:"#1a1a1a",border:"1px solid #2a2a2a"}}/>
+          </div>
+          <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column",marginTop:36}}>
+            <PageContent/>
+          </div>
+          <BottomNav/>
+          <div style={{background:s.bg,padding:"8px 0 6px",display:"flex",justifyContent:"center"}}>
+            <div style={{width:130,height:5,borderRadius:3,background:s.bd}}/>
+          </div>
+        </div>
+        <style>{`@keyframes b0{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes b1{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes b2{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}`}</style>
+      </div>
+    );
+  }
+
+  // Desktop layout
+  return(
+    <div dir="rtl" style={{height:"100vh",display:"flex",background:s.bg,fontFamily:"Tajawal,Arial,sans-serif",color:s.tx,overflow:"hidden"}}>
+      <button onClick={()=>setForceMob(true)} title="وضع الجوال" style={{position:"fixed",top:8,left:8,zIndex:9998,background:"rgba(43,191,179,.15)",border:"1px solid rgba(43,191,179,.3)",borderRadius:10,padding:"6px 10px",fontSize:12,cursor:"pointer",color:"#2BBFB3",fontFamily:"inherit",fontWeight:700}} style='font-size:16px'>📱 iPhone</button>
+      {tst&&<div style={{position:"fixed",bottom:40,left:"50%",transform:"translateX(-50%)",background:s.sf,border:`1px solid ${s.bd}`,borderRadius:14,padding:"12px 20px",boxShadow:"0 8px 32px rgba(0,0,0,.25)",display:"flex",alignItems:"center",gap:10,zIndex:9999,whiteSpace:"nowrap"}}><span style={{fontSize:18}}>{tst.icon}</span><span style={{fontSize:14,fontWeight:600}}>{tst.text}</span></div>}
+      {ach&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:"linear-gradient(135deg,#2BBFB3,#7BC67A)",borderRadius:16,padding:"12px 20px",display:"flex",alignItems:"center",gap:10,zIndex:9999,boxShadow:"0 8px 32px rgba(0,0,0,.3)",color:"white"}}><span style={{fontSize:20}}>{ach.i}</span><div><div style={{fontSize:10,opacity:.8}}>إنجاز!</div><div style={{fontSize:13,fontWeight:700}}>{ach.n}</div></div><span style={{fontSize:12}}>{ach.x}</span></div>}
+      <SideNav/>
+      <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+        <PageContent/>
+      </div>
+      <style>{`@keyframes b0{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes b1{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes b2{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}`}</style>
+    </div>
+  );
+
+  function ansQ(i){
+    if(qsel!==null)return;setQsel(i);
+    const ok=i===QUIZ[qi].c;if(ok)setQs(v=>v+1);
+    setTimeout(()=>{
+      const nx=qi+1;
+      if(nx<QUIZ.length){setQi(nx);setQsel(null);}
+      else{
+        const sc=ok?qs+1:qs,pct=sc/QUIZ.length;
+        let lv,em,dc;
+        if(pct<=.4){lv="مبتدئ";em="🔰";dc="لا تقلق! سنبدأ معك من الأساسيات بطريقة ممتعة.";}
+        else if(pct<=.7){lv="متوسط";em="⚙️";dc="ممتاز! لديك قاعدة جيدة. سنطور مهاراتك.";}
+        else{lv="متقدم";em="🚀";dc="رائع! مستواك متقدم. سنصقل مهاراتك بأحدث التقنيات.";}
+        setRes({level:lv,emoji:em,desc:dc});aXp(100);sA("🎯","المختبر","+100 XP");go("result");
+      }
+    },900);
+  }
+  function cmpStep(i){
+    const p=pr[ls]||0;if(i!==p)return;
+    setPr(prev=>({...prev,[ls]:p+1}));aXp(20);sT2("✅","رائع! أحسنت!");
+    if(p+1>=LESSONS[ls].steps.length)setTimeout(()=>sA("📚","درس مكتمل","+20 XP"),900);
+  }
+  function sndC(txt){
+    const msg=txt||ci.trim();if(!msg)return;
+    setCi("");setMsgs(m=>[...m,{ai:false,text:msg}]);setTyp(true);
+    const k=msg.toLowerCase();
+    let rsp=FB[Math.floor(Math.random()*FB.length)];
+    for(const {k:ks,r} of KB){if(ks.some(key=>k.includes(key))){rsp=r;break;}}
+    setTimeout(()=>{setTyp(false);setMsgs(m=>[...m,{ai:true,text:rsp}]);},1200);
+  }
+  function clkM(it,tp){
+    if(mdn.includes(it.term))return;
+    if(!msel){setMsel({item:it,tp});return;}
+    if(msel.tp===tp){setMsel({item:it,tp});return;}
+    if(msel.item.term===it.term){
+      setMdn(d=>[...d,it.term]);setMsel(null);aXp(15);
+      if(mdn.length+1>=MATCH.length)sA("🔗","المطابق","+60 XP");
+    }else{
+      setMwr([tp==="term"?it.term+"_t":it.term+"_d",msel.tp==="term"?msel.item.term+"_t":msel.item.term+"_d"]);
+      setTimeout(()=>{setMwr([]);setMsel(null);},600);
+    }
+  }
+  function stSp(){
+    if(sptm.current)return;
+    sptm.current=setInterval(()=>setSpt(t=>{if(t<=1){clearInterval(sptm.current);sptm.current=null;setSpdn(true);return 0;}return t-1;}),1000);
+  }
+  function chkSp(){
+    if(!sptm.current)stSp();
+    const ok=spq[spi%spq.length].a;
+    if(spin.trim().toLowerCase()===ok.toLowerCase()){setSps(v=>v+10);setSpfb("✅ صحيح!");aXp(5);}
+    else setSpfb(`❌ الجواب: ${ok}`);
+    setSpin("");setSpi(i=>i+1);setTimeout(()=>setSpfb(""),700);
+  }
+  function ansFl(i){
+    if(fa!==null)return;setFa(i);
+    if(i===FILL[fi].c){sT2("✅","إجابة صحيحة!");aXp(15);}
+    else sT2("❌",`الجواب: ${FILL[fi].opts[FILL[fi].c]}`);
+    setTimeout(()=>{if(fi+1>=FILL.length)setFdn(true);else{setFi(f=>f+1);setFa(null);}},1000);
+  }
+  function gsW(){
+    if(!win.trim()||wtr.length>=6)return;
+    const g=win.trim().toUpperCase();
+    setWtr(t=>[...t,g]);setWin("");
+    if(g===WORDS[wi].word){setWwn(true);aXp(30);sA("💭","خمّان الكلمة","+30 XP");}
+  }
 }
-function animateCounters(){
-  [{id:'counter1',end:18420},{id:'counter2',end:9340},{id:'counter3',end:4280}].forEach(t=>{
-    let v=0;const el=document.getElementById(t.id);const step=Math.ceil(t.end/60);
-    const iv=setInterval(()=>{v=Math.min(v+step,t.end);el.textContent=v.toLocaleString('ar');if(v>=t.end)clearInterval(iv);},20);
-  });
-}
-function showUploadResult(){
-  document.getElementById('repair-bar-fill').style.width='80%';
-  document.getElementById('repair-pct').textContent='80%';
-  setTimeout(()=>{document.getElementById('twin-result').style.display='block';},1000);
-}
-function selectDevice(el,icon){
-  document.querySelectorAll('.d-item').forEach(d=>{d.style.background='';d.style.borderColor='';});
-  el.style.background='var(--teal-light)';el.style.borderColor='var(--teal)';
-  const p=document.querySelector('.twin-pulse');if(p)p.textContent=icon;
-}
-const steps=[
-  {icon:'🧰',title:'تجهيز المكان والأدوات',desc:'أطفئ اللابتوب تماماً وافصله من الكهرباء. اختر سطحاً مستوياً ومضاءً. تأكد من وجود كافة الأدوات اللازمة أمامك قبل البدء.',tools:['مفك Philips #0','فرشاة ناعمة','علبة هواء مضغوط','قفازات مطاطية']},
-  {icon:'🪛',title:'فتح الغطاء الخلفي',desc:'استخدم مفك Philips لإزالة براغي الغطاء الخلفي. ضعها في مكان آمن. أدخل أداة بلاستيكية برفق على الحواف لفك الأقفال.',tools:['مفك Philips #0','أداة فتح بلاستيكية']},
-  {icon:'💨',title:'تنظيف المروحة والمشعاع',desc:'استخدم الهواء المضغوط لنفخ الغبار من المروحة. فرّغ مجرى الهواء والمشعاع. استخدم الفرشاة الناعمة لتنظيف الشفرات بلطف.',tools:['علبة هواء مضغوط','فرشاة ناعمة']},
-  {icon:'✅',title:'التحقق من عمل المروحة',desc:'أعد توصيل اللابتوب مؤقتاً بدون غلق الغطاء. شغّل الجهاز وراقب المروحة. يجب أن تعمل بسلاسة بدون أصوات غريبة.',tools:[]},
-  {icon:'🔒',title:'إغلاق الجهاز بالبراغي',desc:'أعد وضع الغطاء الخلفي وتأكد من محاذاة الأقفال. أعد تثبيت البراغي بنفس الترتيب. لا تشدّ البراغي بقوة زائدة.',tools:['مفك Philips #0']},
-];
-let cs=0;
-function setStep(i){
-  cs=i;const s=steps[i];
-  document.getElementById('step-visual').textContent=s.icon;
-  document.getElementById('step-title').textContent=s.title;
-  document.getElementById('step-desc').textContent=s.desc;
-  const tl=document.getElementById('tools-list');
-  tl.innerHTML=s.tools.length?s.tools.map(t=>`<span class="tool-tag">${t}</span>`).join(''):'<span style="font-size:13px;color:var(--text-sec)">لا أدوات مطلوبة</span>';
-  document.querySelectorAll('.step-item').forEach((it,idx)=>{
-    it.classList.toggle('active-step',idx===i);
-    const sn=it.querySelector('.step-num');
-    sn.style.background=idx===i?'var(--teal)':'#D3D1C7';
-    sn.style.color=idx===i?'white':'var(--text-sec)';
-  });
-}
-function nextStep(){if(cs<steps.length-1)setStep(cs+1);}
-function prevStep(){if(cs>0)setStep(cs-1);}
-let chatOpen=false;
-function toggleChat(){chatOpen=!chatOpen;document.getElementById('chat-overlay').classList.toggle('open',chatOpen);}
-const bots=['بالتأكيد! تأكد من فصل الكهرباء أولاً.','هذا طبيعي، استمر بلطف.','إذا واجهت صعوبة، تواصل مع أحد الخبراء.','ممتاز! أنت تسير بشكل صحيح.'];
-function sendChat(){
-  const inp=document.getElementById('chat-inp');const msgs=document.getElementById('chat-msgs');
-  const text=inp.value.trim();if(!text)return;
-  msgs.innerHTML+=`<div class="msg user">${text}</div>`;inp.value='';
-  setTimeout(()=>{msgs.innerHTML+=`<div class="msg bot">${bots[Math.floor(Math.random()*bots.length)]}</div>`;msgs.scrollTop=msgs.scrollHeight;},600);
-  msgs.scrollTop=msgs.scrollHeight;
-}
-animateCounters();
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
 </script>
+</body>
+</html>
